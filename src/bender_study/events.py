@@ -8,7 +8,6 @@ import numpy as np
 
 
 class Events(MutableSequence):
-
     def __init__(self, data=None):
         super(self.__class__, self).__init__()
         if data is not None:
@@ -17,8 +16,8 @@ class Events(MutableSequence):
                 fields = list(data.keys())
                 n_field = [len(data[k]) for k in list(data.keys())]
                 if len(np.unique(n_field)) > 1:
-                    raise ValueError('Fields are different length.')
-                
+                    raise ValueError("Fields are different length.")
+
                 l = []
                 for i in range(n_field[0]):
                     d = OrderedDict()
@@ -57,7 +56,7 @@ class Events(MutableSequence):
 
     def __repr__(self):
         return "<Events %s>" % self._dlist
-        
+
     def insert(self, ind, val):
         # add new fields if necessary
         new = [v for v in list(val.keys()) if v not in list(self.keys())]
@@ -79,7 +78,7 @@ class Events(MutableSequence):
             if field in e:
                 del e[field]
         self._fields.remove(field)
-    
+
     def list(self, key):
         """Return a feature from each event as a list."""
         l = []
@@ -89,14 +88,14 @@ class Events(MutableSequence):
             else:
                 l.append(None)
         return l
-        
+
     def array(self, key, **kwargs):
         """Return a feature from each event as an array."""
 
         try:
             a = np.array(self.list(key))
         except ValueError:
-            raise ValueError('Problem converting field to array.')
+            raise ValueError("Problem converting field to array.")
 
         if kwargs is not None:
             inc = self.match(**kwargs)
@@ -106,8 +105,10 @@ class Events(MutableSequence):
     def setfield(self, key, vals):
         """Set the value of a field for all events."""
 
-        if hasattr(vals, '__len__') and len(vals) != self.__len__():
-            raise ValueError('Input vector must be a scalar or the same length as events.')
+        if hasattr(vals, "__len__") and len(vals) != self.__len__():
+            raise ValueError(
+                "Input vector must be a scalar or the same length as events."
+            )
         for i in range(self.__len__()):
             if isinstance(vals, numbers.Number):
                 self._dlist[i][key] = vals
@@ -115,17 +116,17 @@ class Events(MutableSequence):
                 self._dlist[i][key] = vals[i]
         if key not in self._fields:
             self._fields.append(key)
-    
+
     def match(self, **kwargs):
         """Find events that match a set of conditions."""
 
         inc = np.ones(self.__len__(), dtype=bool)
         for key, val in six.iteritems(kwargs):
             carray = self.array(key)
-            if val == 'nan':
+            if val == "nan":
                 # must use special test for NaNs
                 cond_match = np.isnan(carray)
-            elif val == '!nan':
+            elif val == "!nan":
                 cond_match = np.logical_not(np.isnan(carray))
             else:
                 cond_match = carray == val
@@ -141,7 +142,7 @@ class Events(MutableSequence):
         for i in ind:
             ev.append(self._dlist[i])
         return Events(ev)
-    
+
     def merge(self):
         """Merge all events into one dict."""
 
@@ -174,10 +175,10 @@ class Events(MutableSequence):
             for field in varying:
                 ev_red.rmfield(field)
         return ev_red
-    
+
     def filter(self, **kwargs):
         """Return a subset of events."""
-        
+
         inc = self.match(**kwargs)
         lsub = []
         for i in range(self.__len__()):
@@ -192,10 +193,10 @@ class Events(MutableSequence):
         length = [len(v.__repr__()) for v in a]
         length.append(len(key))
         return np.max(length)
-    
+
     def table(self, include=None, exclude=None):
         """Return a table showing all events."""
-        
+
         if include is not None:
             fields = include
         else:
@@ -207,22 +208,22 @@ class Events(MutableSequence):
         fmt = {}
         for key in fields:
             csize = self.col_size(key)
-            header_fmt[key] = '%%-%ds  ' % csize
-            fmt[key] = '%%%ds  ' % csize
-            
+            header_fmt[key] = "%%-%ds  " % csize
+            fmt[key] = "%%%ds  " % csize
+
         # print header
-        s = ''
+        s = ""
         for key in fields:
             s += header_fmt[key] % key
 
         # print data
-        s += '\n'
+        s += "\n"
         for event in self._dlist:
             for key in fields:
                 if key in event:
                     val = event[key].__repr__()
                 else:
-                    val = 'None'
+                    val = "None"
                 s += fmt[key] % val
-            s += '\n'
+            s += "\n"
         return s
