@@ -443,16 +443,8 @@ class BenderPath(SubjPath):
         day2_fm = set([run for phase in day2 for run in phase])
         if self.subject == "bender_08":
             # used localizer is actually on day 2
-            day1_fm = set(
-                [
-                    1,
-                ]
-            )
-            day2_fm = set(
-                [
-                    2,
-                ]
-            )
+            day1_fm = {1}
+            day2_fm = {2}
 
         fm_anat = dict()
         n = len(self.get_fieldmaps())
