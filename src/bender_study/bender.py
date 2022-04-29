@@ -8,17 +8,12 @@ from bender_study import patio
 from bender_study.events import Events
 
 
-def res_list(
-    filepat,
-    exclude=[
-        None,
-    ],
-):
+def res_list(filepat, exclude=None):
     res = []
     subjects = os.environ["SUBJIDS"].strip().split(":")
     inc_subj = []
     for subj in subjects:
-        if subj in exclude:
+        if exclude is not None and subj in exclude:
             continue
 
         res_file = filepat % subj
