@@ -1,6 +1,8 @@
 #!/bin/bash
+#
+# Run initial organization (DICOM conversion and renaming).
 
-if [ $# -lt 1 ]; then
+if [[ $# -lt 1 ]]; then
     echo "Usage:   bender_init.sh subject"
     echo "Example: bender_init.sh bender_01"
     exit 1
@@ -10,20 +12,20 @@ subject=$1
 
 echo "Converting dicom files:"
 echo "Day 1..."
-convert_dicom.py $subject
+convert_dicom.py "${subject}"
 echo "Day 2..."
-convert_dicom.py ${subject}a
-if [ -d ${STUDYDIR}/${subject}b ]; then
+convert_dicom.py "${subject}a"
+if [[ -d ${STUDYDIR}/${subject}b ]]; then
     echo "Day 2 part 2..."
-    convert_dicom.py ${subject}b
+    convert_dicom.py "${subject}b"
 fi
 
 echo "Renaming nifti files:"
 echo "Day 1..."
-rename_nifti.py $subject
+rename_nifti.py "${subject}"
 echo "Day 2..."
-rename_nifti.py ${subject}a
-if [ -d ${STUDYDIR}/${subject}b ]; then
+rename_nifti.py "${subject}a"
+if [[ -d ${STUDYDIR}/${subject}b ]]; then
     echo "Day 2 part 2..."
-    rename_nifti.py ${subject}b
+    rename_nifti.py "${subject}b"
 fi

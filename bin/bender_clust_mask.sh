@@ -1,9 +1,11 @@
 #!/bin/bash
+#
+# Export an indivdual cluster mask from group cluster labels.
 
-if [ $# -lt 4 ]; then
-    echo "indiv_clust_mask.sh - Create individual masks from a group cluster"
+if [[ $# -lt 4 ]]; then
+    echo "bender_clust_mask.sh - Create individual masks from a group cluster"
     echo
-    echo "Usage: indiv_clust_mask.sh [-a anat] [-r radius] -g subjects cluster_mask clustind maskname"
+    echo "Usage: bender_clust_mask.sh [-a anat] [-r radius] -g subjects cluster_mask clustind maskname"
     echo
     echo "-a anat"
     echo "    reference anatomical image"
@@ -44,6 +46,10 @@ while getopts ":r:a:g" opt; do
         g)
             gray=true
             ;;
+        *)
+            echo "Error: Unknown option: ${opt}"
+            exit 1
+            ;;
     esac
 done
 shift $((OPTIND-1))
@@ -53,39 +59,39 @@ cluster_mask=$2
 clustind=$3
 maskname=$4
 
-if [ $(imtest $cluster_mask) = 0 ]; then
+if [[ $(imtest "${cluster_mask}") = 0 ]]; then
     echo "cluster mask does not exist: $cluster_mask"
     exit 1
 fi
 
-parent=$(dirname $cluster_mask)
+parent=$(dirname "${cluster_mask}")
 
 # make group-level mask (saved to same directory as the cluster mask)
 echo "Making group mask..."
-group_mask=$parent/${maskname}.nii.gz
-fslmaths $cluster_mask -thr $clustind -uthr $clustind -bin $group_mask
-n_vox=$(fslstats $group_mask -V | cut -d ' ' -f 1)
-echo "$maskname: $n_vox voxels"
+group_mask=${parent}/${maskname}.nii.gz
+fslmaths "${cluster_mask}" -thr "${clustind}" -uthr "${clustind}" -bin "${group_mask}"
+n_vox=$(fslstats "${group_mask}" -V | cut -d ' ' -f 1)
+echo "${maskname}: ${n_vox} voxels"
 
 # make individual masks
 echo "Transforming to native spaces..."
 export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=4
-if [ -n "$refanat" ]; then
-    flags="-a $refanat"
+if [[ -n "${refanat}" ]]; then
+    flags="-a ${refanat}"
 else
     flags=""
 fi
-parallel -P 6 bender_mni2func.sh "$flags" -n NearestNeighbor $group_mask $STUDYDIR/{}/anatomy/bbreg/data/${maskname}.nii.gz {} ::: $(subjids -s " " $subjects)
+parallel -P 6 bender_mni2func.sh "$flags" -n NearestNeighbor "${group_mask}" "${STUDYDIR}/{}/anatomy/bbreg/data/${maskname}.nii.gz" {} ::: $(subjids -s " " "${subjects}")
 
 # expand the mask
 if (( $(bc <<< "$radius > 0") )); then
-    echo "Expanding native masks using a radius of $radius..."
-    parallel -P 12 fslmaths $STUDYDIR/{}/anatomy/bbreg/data/${maskname}.nii.gz -kernel sphere $radius -dilD $STUDYDIR/{}/anatomy/bbreg/data/${maskname}.nii.gz ::: $(subjids -s " " $subjects)
+    echo "Expanding native masks using a radius of ${radius}..."
+    parallel -P 12 fslmaths "${STUDYDIR}/{}/anatomy/bbreg/data/${maskname}.nii.gz" -kernel sphere "${radius}" -dilD "${STUDYDIR}/{}/anatomy/bbreg/data/${maskname}.nii.gz" ::: $(subjids -s " " "${subjects}")
 fi
 
 # intersect with a minimally dilated gray matter mask
 # made using: fslmaths b_gray -kernel sphere 1.75 -dilD
 if [ $gray = true ]; then
     echo "Intersecting with gray matter mask..."
-    parallel -P 12 fslmaths $STUDYDIR/{}/anatomy/bbreg/data/${maskname}.nii.gz -mas $STUDYDIR/{}/anatomy/bbreg/data/b_gray_dil3mm.nii.gz $STUDYDIR/{}/anatomy/bbreg/data/${maskname}.nii.gz ::: $(subjids -s " " $subjects)
+    parallel -P 12 fslmaths "${STUDYDIR}/{}/anatomy/bbreg/data/${maskname}.nii.gz" -mas "${STUDYDIR}/{}/anatomy/bbreg/data/b_gray_dil3mm.nii.gz" "${STUDYDIR}/{}/anatomy/bbreg/data/${maskname}.nii.gz" ::: $(subjids -s " " "${subjects}")
 fi

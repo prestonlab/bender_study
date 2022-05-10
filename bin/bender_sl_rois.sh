@@ -18,16 +18,16 @@ rprc,rsa/study_wiki_w2v_fix_cont_ac_bx_sme,55
 EOF
 
 while read entry; do
-    echo $entry
+    echo "${entry}"
 
     # unpack spec
-    roi=$(echo $entry | cut -d , -f 1)
-    filepath=$(echo $entry | cut -d , -f 2)
-    cluster=$(echo $entry | cut -d , -f 3)
+    roi=$(echo "${entry}" | cut -d , -f 1)
+    filepath=$(echo "${entry}" | cut -d , -f 2)
+    cluster=$(echo "${entry}" | cut -d , -f 3)
 
     statdir=$STUDYDIR/batch/$filepath
-    analysis=$(basename $filepath)
+    analysis=$(basename "${filepath}")
     maskname=${analysis}_${roi}_dil1nn
-    cluster -i $statdir/stat_thresh -t 0.001 --minextent=100 -o $statdir/cluster_mask100 > $statdir/cluster100.txt
-    bender_clust_mask.sh -a 2 -r 1.75 $SUBJNOS $statdir/cluster_mask100.nii.gz $cluster $maskname
+    cluster -i "${statdir}/stat_thresh" -t 0.001 --minextent=100 -o "${statdir}/cluster_mask100" > "${statdir}/cluster100.txt"
+    bender_clust_mask.sh -a 2 -r 1.75 "${SUBJNOS}" "${statdir}/cluster_mask100.nii.gz" "${cluster}" "${maskname}"
 done < $roi_spec

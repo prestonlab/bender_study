@@ -13,6 +13,9 @@ while getopts ":n:" opt; do
         n)
             interp=$OPTARG
             ;;
+        *)
+            echo "Error: unknown option ${opt}."
+            exit 1
     esac
 done
 shift $((OPTIND-1))
@@ -22,4 +25,4 @@ output=$2
 
 tdir=$STUDYDIR/gptemplate/highres_brain_all
 
-antsApplyTransforms -d 3 -i $input -r $tdir/gp_template_mni_affine.nii.gz -o $output -n $interp -t $tdir/gp_template2mni_1InverseWarp.nii.gz
+antsApplyTransforms -d 3 -i "${input}" -r "${tdir}/gp_template_mni_affine.nii.gz" -o "${output}" -n "${interp}" -t "${tdir}/gp_template2mni_1InverseWarp.nii.gz"

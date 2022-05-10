@@ -5,20 +5,20 @@
 mnidir=$STUDYDIR/gptemplate/tofu_mni
 tdir=$STUDYDIR/gptemplate/highres_brain_all
 
-mkdir -p $tdir/roi/mtl
-if [ ! -e $tdir/drawn_mtl.nii.gz ]; then
+mkdir -p "${tdir}/roi/mtl"
+if [[ ! -e ${tdir}/drawn_mtl.nii.gz ]]; then
     # project labels into template space, based on template-MNI
     # nonlinear registration
-    bender_mni2template.sh -n MultiLabel $mnidir/drawn_mtl.nii.gz $tdir/drawn_mtl.nii.gz
+    bender_mni2template.sh -n MultiLabel "${mnidir}/drawn_mtl.nii.gz" "${tdir}/drawn_mtl.nii.gz"
 fi
 
-imcp $tdir/drawn_mtl $tdir/roi/mtl
-imcp $tdir/b_gray $tdir/roi/mtl
+imcp "${tdir}/drawn_mtl" "${tdir}/roi/mtl"
+imcp "${tdir}/b_gray" "${tdir}/roi/mtl"
 
 # take HPC ROI from the FS segmentation data. Included here just to
 # make sure the other ROIs don't run into HPC
-imcp $tdir/b_hip_fshs_dil1 $tdir/roi/mtl/hip
-cd $tdir/roi/mtl
+imcp "${tdir}/b_hip_fshs_dil1" "${tdir}/roi/mtl/hip"
+cd "${tdir}/roi/mtl" || exit
 
 # get bilateral mask for each ROI
 mergelabels prc drawn_mtl 1 2
@@ -32,7 +32,7 @@ fslmaths prc -uthr 0 -bin empty
 files="empty"
 for roi in hip phc prc erc; do
     echo "expanding ${roi}..."
-    fslmaths $roi -s $sigma ${roi}_sm
+    fslmaths "${roi}" -s "${sigma}" "${roi}_sm"
 
     files="$files ${roi}_sm"
 done
@@ -48,9 +48,9 @@ i=1
 for roi in phc prc erc; do
     echo "finalizing ${roi}..."
     i=$((i+1))
-    fslmaths mtl_max_ind -thr $i -uthr $i -bin ${roi}_max
-    fslmaths ${roi} -kernel sphere 3.1 -dilD ${roi}_dil
-    fslmaths ${roi}_dil -mas ${roi}_max ${roi}_max_dil
-    fslmaths ${roi}_max_dil -mas b_gray ${roi}_max_dil_mask
-    imcp ${roi}_max_dil_mask $tdir/b_${roi}2
+    fslmaths mtl_max_ind -thr "${i}" -uthr "${i}" -bin "${roi}_max"
+    fslmaths "${roi}" -kernel sphere 3.1 -dilD "${roi}_dil"
+    fslmaths "${roi}_dil" -mas "${roi}_max" "${roi}_max_dil"
+    fslmaths "${roi}_max_dil" -mas b_gray "${roi}_max_dil_mask"
+    imcp "${roi}_max_dil_mask" "${tdir}/b_${roi}2"
 done
