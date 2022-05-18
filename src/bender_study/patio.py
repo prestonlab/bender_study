@@ -4,7 +4,7 @@ from collections import OrderedDict
 import numpy as np
 import os
 import re
-from events import Events
+from bender_study.events import Events
 
 
 def read_log(filepath):
