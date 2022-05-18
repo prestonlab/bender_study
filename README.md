@@ -3,6 +3,25 @@ Code for analysis of the Bender study phase.
 
 ## Analysis procedure
 
+### Installation
+
+Run on Lonestar 6 with Python 3.9.
+
+```bash
+python3 -m venv ~/software/venv/bender_study
+. ~/software/venv/bender_study/bin/activate
+pip install -U pip
+pip install numpy scipy nibabel scikit-learn
+mkdir -p ~/analysis && cd ~/analysis
+cd PyMVPA || git clone https://github.com/mortonne/PyMVPA.git && cd PyMVPA
+module load swig
+python setup.py build_ext
+python setup.py install
+pip install ezlaunch mindstorm
+cd bender_study || git clone git@github.com:prestonlab/bender_study.git && cd bender_study
+pip install -e .
+```
+
 * `. ~/analysis/bender_study/.profile`
   * Set environment variables needed to run scripts
 
