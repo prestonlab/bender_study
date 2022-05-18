@@ -20,7 +20,7 @@ def perm_within(cat, n_perm):
         perm_ind = np.zeros((len(cat),), dtype=int)
         for j in ucat:
             cat_ind = np.nonzero(cat == j)[0]
-            perm_ind[cat_ind] = random.sample(cat_ind, len(cat_ind))
+            perm_ind[cat_ind] = random.sample(list(cat_ind), len(cat_ind))
         rand_ind.append(perm_ind)
     return rand_ind
 
