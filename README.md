@@ -7,6 +7,8 @@ Code for analysis of the Bender study phase.
 
 Run on Lonestar 6 with Python 3.9.
 
+Steps to run installation (only needs to be run once):
+
 ```bash
 python3 -m venv ~/software/venv/bender_study
 . ~/software/venv/bender_study/bin/activate
@@ -23,8 +25,11 @@ cd bender_study || git clone git@github.com:prestonlab/bender_study.git && cd be
 pip install -e .
 ```
 
-* `. ~/analysis/bender_study/.profile`
-  * Set environment variables needed to run scripts
+Set up environment to run scripts (run on each login):
+
+```bash
+. ~/analysis/bender_study/.profile
+```
 
 ### Preprocessing
 
