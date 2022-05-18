@@ -1,7 +1,7 @@
 """Class for working with collections of experimental events."""
 
 import numbers
-from collections import MutableSequence
+from collections.abc import MutableSequence
 from collections import OrderedDict
 import six
 import numpy as np
