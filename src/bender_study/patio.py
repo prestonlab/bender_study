@@ -33,8 +33,8 @@ def event_array(events, key):
 def find_run_log(log_dir, period, run):
     """Find the log for a given run."""
 
-    log_test = re.compile("^log_\d+-\d+-\d+_\D+.txt$")
-    state_test = re.compile("\d+-\d+-\d+")
+    log_test = re.compile(r"^log_\d+-\d+-\d+_\D+.txt$")
+    state_test = re.compile(r"\d+-\d+-\d+")
 
     # start with a list of all files and directories
     d = os.listdir(log_dir)
