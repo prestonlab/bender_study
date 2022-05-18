@@ -17,6 +17,7 @@ cd PyMVPA || git clone https://github.com/mortonne/PyMVPA.git && cd PyMVPA
 module load swig
 python setup.py build_ext
 python setup.py install
+pip install git+https://github.com/mortonne/pprocess.git
 pip install ezlaunch mindstorm
 cd bender_study || git clone git@github.com:prestonlab/bender_study.git && cd bender_study
 pip install -e .
