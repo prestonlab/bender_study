@@ -1,3 +1,6 @@
+# activate the Python virtual environment
+source $STOCKYARD/software/venv/bender_study/bin/activate
+
 # subjects in main analysis (good images and behavior)
 export SUBJIDFORMAT=bender_%02d
 export SUBJNOS=2:4:5:6:7:8:10:11:12:13:14:15:16:17:18:20:21:22:23:24:25:26:28:29:31:32:34:35:37:38
