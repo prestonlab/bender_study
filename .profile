@@ -9,3 +9,9 @@ export PREXRUNS=prex_1:prex_2:prex_3:prex_4:prex_5:prex_6
 export STUDYRUNS=study_1:study_2:study_3:study_4:study_5:study_6
 export TESTRUNS=test_1:test_2:test_3:test_4:test_5
 export ALLRUNS=$LOCRUNS:$PREXRUNS:$STUDYRUNS:$TESTRUNS
+
+# base study directory
+export STUDYDIR=$STOCKYARD/lonestar/bender
+
+# directory to save job output
+export BATCHDIR=$STOCKYARD/lonestar/bender/batch/launchscripts
