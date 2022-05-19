@@ -14,6 +14,7 @@ export TESTRUNS=test_1:test_2:test_3:test_4:test_5
 export ALLRUNS=$LOCRUNS:$PREXRUNS:$STUDYRUNS:$TESTRUNS
 
 # base study directory
+export STUDY=bender
 export STUDYDIR=$STOCKYARD/lonestar/bender
 
 # directory to save job output
