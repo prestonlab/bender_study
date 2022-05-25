@@ -3,6 +3,24 @@
 import os
 import random
 import numpy as np
+from mvpa2.base.dataset import vstack
+from mvpa2.datasets.mri import fmri_dataset
+
+
+def loadcat(srcfiles, maskfile):
+    """Load files as datasets and concatenate them."""
+    for i, file in enumerate(srcfiles):
+        print("Loading %s" % file)
+        if i == 0:
+            ds = fmri_dataset(file, mask=maskfile)
+            ds.sa['chunks'] = [i]
+            a = ds.a
+        else:
+            newds = fmri_dataset(file, mask=maskfile)
+            newds.sa['chunks'] = [i]
+            ds = vstack((ds, newds))
+    ds.a = a
+    return ds
 
 
 def get_thresholding_map(data, p=0.001):
