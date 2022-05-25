@@ -31,5 +31,5 @@ for i in $(seq 1 "${nslices}"); do
             permlist="${permlist} ${perm}"
         fi
     done
-    echo "dsmerge.py ${outdir}/mask_z/mask_z${sliceno}.nii.gz ${outdir}/perm_z${sliceno}.hdf5 ${permlist}"
+    echo "bender_dsmerge.py ${outdir}/mask_z/mask_z${sliceno}.nii.gz ${outdir}/perm_z${sliceno}.hdf5 ${permlist}"
 done

@@ -41,6 +41,6 @@ for i in $(seq 1 "${nslices}"); do
     thresh=${permdir}/thresh_z${sliceno}.nii.gz
     
     if [[ ${overwrite} = true || ! -s ${thresh} ]]; then
-        echo "gvt.py $permds $stat $thresh -r $permdir/rand_ind.txt $*"
+        echo "bender_gvt.py $permds $stat $thresh -r $permdir/rand_ind.txt $*"
     fi
 done
