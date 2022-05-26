@@ -78,7 +78,7 @@ fi
 if [[ $dry_run = true ]]; then
     echo "bender_prep_gvt.sh -m $mask $filepath $subjects"
 else
-    jobid2=$(ezlaunch "bender_prep_gvt.sh -m $mask $filepath $subjects" -N 1 -n 1 -r 00:05:00 -A "$project" -d "$jobid1" | tee -a "$log_file" | getjid)
+    jobid2=$(ezlaunch -J gvt_prep "bender_prep_gvt.sh -m $mask $filepath $subjects" -N 1 -n 1 -r 00:05:00 -A "$project" -d "$jobid1" | tee -a "$log_file" | getjid)
 fi
 
 # merge slice files into datasets with all subjects and all permutations
@@ -87,7 +87,7 @@ bender_prep_gvt_commands.sh "$filepath" "$subjects" > "$prep_file"
 if [[ $dry_run = true ]]; then
     echo "ezlaunch -s $prep_file"
 else
-    jobid3=$(ezlaunch -s "$prep_file" -N 1 -n 24 -r 00:30:00 -A "$project" -d "$jobid2" | tee -a "$log_file" | getjid)
+    jobid3=$(ezlaunch -J gvt_merge -s "$prep_file" -N 1 -n 24 -r 00:30:00 -A "$project" -d "$jobid2" | tee -a "$log_file" | getjid)
 fi
 
 # run gvt on each slice
@@ -101,12 +101,12 @@ bender_gvt_commands.sh "$perm_dir" -a "$alpha" > "$run_file"
 if [[ $dry_run = true ]]; then
     echo "ezlaunch -s $run_file"
 else
-    jobid4=$(ezlaunch -s "$run_file" -N 10 -n 10 -r 03:00:00 -A "$project" -d "$jobid3" | tee -a "$log_file" | getjid)
+    jobid4=$(ezlaunch -J gvt_perm -s "$run_file" -N 10 -n 10 -r 03:00:00 -A "$project" -d "$jobid3" | tee -a "$log_file" | getjid)
 fi
 
 # merge slices, calculate thresholded image, backup main results
 if [[ $dry_run = true ]]; then
     echo "bender_post_gvt.sh $filepath"
 else
-    ezlaunch "bender_post_gvt.sh $filepath" -N 1 -n 1 -r 00:10:00 -A "$project" -d "$jobid4" | tee -a "$log_file"
+    ezlaunch -J gvt_post "bender_post_gvt.sh $filepath" -N 1 -n 1 -r 00:10:00 -A "$project" -d "$jobid4" | tee -a "$log_file"
 fi
