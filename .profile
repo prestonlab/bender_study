@@ -19,3 +19,12 @@ export STUDYDIR=$STOCKYARD/lonestar/bender
 
 # directory to save job output
 export BATCHDIR=$STOCKYARD/lonestar/bender/batch/launchscripts
+
+# activate LMod modules for Lonestar 6
+module load python3/3.9.7
+module load launcher/3.10
+module use /work2/03206/mortonne/software/modules
+module load fsl/5.0.11
+module load ants/2.1.0
+module load gsl
+module load afni/16.1.20
