@@ -20,7 +20,7 @@ outdir=${SCRATCH}/${STUDY}/batch/${filepath}
 template=${STUDYDIR}/gptemplate/highres_brain_all/gp_template_mni_affine.nii.gz
 nslices=$(fslval "${template}" dim3)
 
-for i in $(seq 1 "${nslices}"); do
+for i in $(seq 1 ${nslices}); do
     permlist=""
     sliceno=$(printf '%04d' $((i-1)))
     for id in ${subjids}; do
