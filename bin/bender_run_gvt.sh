@@ -74,7 +74,7 @@ fi
 if [[ $dry_run = true ]]; then
     echo "bender_prep_gvt.sh -m $mask $filepath $subjects"
 else
-    jobid2=$(ezlaunch -J gvt_prep "bender_prep_gvt.sh -m $mask $filepath $subjects" -N 1 -n 1 -r 00:05:00 -d "$jobid1" | tee -a "$log_file" | getjid)
+    jobid2=$(ezlaunch -J gvt_prep "bender_prep_gvt.sh -m $mask $filepath" -N 1 -n 1 -r 00:05:00 -d "$jobid1" | tee -a "$log_file" | getjid)
 fi
 
 # merge slice files into datasets with all subjects and all permutations
