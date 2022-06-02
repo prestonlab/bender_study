@@ -34,7 +34,7 @@ shift
 template=${STUDYDIR}/gptemplate/highres_brain_all/gp_template_mni_affine.nii.gz
 nslices=$(fslval "${template}" dim3)
 
-for i in $(seq 1 "${nslices}"); do
+for i in $(seq 1 ${nslices}); do
     sliceno=$(printf '%04d' $((i-1)))
     permds=${permdir}/perm_z${sliceno}.hdf5
     stat=${permdir}/stat_z${sliceno}.nii.gz
