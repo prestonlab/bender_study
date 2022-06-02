@@ -71,7 +71,7 @@ def thresh_map(
     # pre-built the bootstrap combinations
     if bcombos is None:
         bcombos = [
-            [random.sample(v, 1)[0] for v in chunk_samples.values()]
+            [random.sample(v.tolist(), 1)[0] for v in chunk_samples.values()]
             for i in range(n_bootstrap)
         ]
         bcombos = np.array(bcombos, dtype=int)
