@@ -75,7 +75,7 @@ def thresh_map(
             for i in range(n_bootstrap)
         ]
         bcombos = np.array(bcombos, dtype=int)
-    segwidth = ds.nfeatures / n_blocks
+    segwidth = int(ds.nfeatures / n_blocks)
     # speed things up by operating on an array not a dataset
     ds_samples = ds.samples
 
