@@ -83,7 +83,7 @@ bender_prep_gvt_commands.sh "$filepath" "$subjects" > "$prep_file"
 if [[ $dry_run = true ]]; then
     echo "ezlaunch -s $prep_file"
 else
-    jobid3=$(ezlaunch -J gvt_merge -s "$prep_file" -N 1 -n 24 -r 00:30:00 -d "$jobid2" | tee -a "$log_file" | getjid)
+    jobid3=$(ezlaunch -J gvt_merge -s "$prep_file" -N 1 -n 64 -r 00:15:00 -d "$jobid2" | tee -a "$log_file" | getjid)
 fi
 
 # run gvt on each slice
