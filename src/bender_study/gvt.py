@@ -72,7 +72,7 @@ def thresh_map(
     if bcombos is None:
         bcombos = [
             [random.sample(v, 1)[0] for v in chunk_samples.values()]
-            for i in xrange(n_bootstrap)
+            for i in range(n_bootstrap)
         ]
         bcombos = np.array(bcombos, dtype=int)
     segwidth = ds.nfeatures / n_blocks
@@ -90,7 +90,7 @@ def thresh_map(
         ds_samples = load(mmap_file, mmap_mode="r+")
 
     def featuresegment_producer(ncols):
-        for segstart in xrange(0, ds.nfeatures, ncols):
+        for segstart in range(0, ds.nfeatures, ncols):
             # one average map for every stored bcombo
             # this also slices the input data into feature subsets
             # for the compute blocks
