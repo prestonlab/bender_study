@@ -13,3 +13,4 @@ ds = gvt.loadcat(sys.argv[3:], maskfile)
 
 # save the full dataset
 ds.save(outfile)
+print(f'Saved merged data to {outfile}.')
