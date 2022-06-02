@@ -78,7 +78,7 @@ else
 fi
 
 # merge slice files into datasets with all subjects and all permutations
-prep_file=$BATCHDIR/prep_gvt_${analysis}.sh
+prep_file=$BATCHDIR/run_gvt_merge_${analysis}.sh
 bender_prep_gvt_commands.sh "$filepath" "$subjects" > "$prep_file"
 if [[ $dry_run = true ]]; then
     echo "ezlaunch -s $prep_file"
@@ -87,7 +87,7 @@ else
 fi
 
 # run gvt on each slice
-run_file=$BATCHDIR/run_gvt_${analysis}.sh
+run_file=$BATCHDIR/run_gvt_perm_${analysis}.sh
 perm_dir=$SCRATCH/$STUDY/batch/$filepath
 mkdir -p "$perm_dir"
 n_subj=$(echo "$subjects" | tr ':' ' ' | wc -w)
