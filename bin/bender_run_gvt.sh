@@ -39,6 +39,7 @@ shift $((OPTIND-1))
 
 filepath=$1
 subjects=$2
+subject_ids=$(subjids "$subjects")
 analysis=$(basename "${filepath}")
 log_file=${BATCHDIR}/gvt_${analysis}.log
 
@@ -67,7 +68,7 @@ fi
 if [[ $dry_run = true ]]; then
     echo "bender_perm2mni.sh -m ${mask} -i ${interp} {} ${filepath}"
 else
-    jobid1=$(slaunch -J gvt_perm_mni "bender_perm2mni.sh -m $mask -i $interp {} $filepath" "$subjects" -N 5 -n 30 -a 40 -r 01:00:00 | tee -a "$log_file" | getjid)
+    jobid1=$(slaunch -J gvt_perm_mni "bender_perm2mni.sh -m $mask -i $interp {} $filepath" "$subject_ids" -N 5 -n 30 -a 40 -r 01:00:00 | tee -a "$log_file" | getjid)
 fi
 
 # prep gvt directory, split mask for creating slice file datasets
