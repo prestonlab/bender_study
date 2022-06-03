@@ -4,8 +4,8 @@
 
 if [[ $# -lt 3 ]]; then
     cat <<EOF
-Usage:   transform_mni2func.sh [-n interp] [-a anat] input output subject
-Example: transform_mni2func.sh -n NearestNeighbor contrast_group_mask.nii.gz bender_01_contrast_mask.nii.gz bender_01
+Usage:   bender_mni2func.sh [-n interp] [-a anat] input output subject
+Example: bender_mni2func.sh -n NearestNeighbor contrast_group_mask.nii.gz bender_01_contrast_mask.nii.gz bender_01
 
 After running reg_anat2mni.py, can use this to transform any image in
 template space (MNI or custom) to functional space.
