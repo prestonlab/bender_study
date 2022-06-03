@@ -102,7 +102,7 @@ fi
 
 # merge slices, calculate thresholded image, backup main results
 if [[ $dry_run = true ]]; then
-    echo "bender_post_gvt.sh $filepath"
+    echo "bender_post_gvt.sh $filepath $subjects"
 else
-    ezlaunch -J gvt_post "bender_post_gvt.sh $filepath" -N 1 -n 1 -r 00:10:00 -d "$jobid4" | tee -a "$log_file"
+    ezlaunch -J gvt_post "bender_post_gvt.sh $filepath $subjects" -N 1 -n 1 -r 00:10:00 -d "$jobid4" | tee -a "$log_file"
 fi
