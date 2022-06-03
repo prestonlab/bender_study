@@ -97,7 +97,7 @@ bender_gvt_commands.sh "$perm_dir" -a "$alpha" > "$run_file"
 if [[ $dry_run = true ]]; then
     echo "ezlaunch -s $run_file"
 else
-    jobid4=$(ezlaunch -J gvt_perm -s "$run_file" -N 10 -n 10 -r 03:00:00 -d "$jobid3" | tee -a "$log_file" | getjid)
+    jobid4=$(ezlaunch -J gvt_perm -s "$run_file" -N 4 -n 16 -r 02:00:00 -d "$jobid3" | tee -a "$log_file" | getjid)
 fi
 
 # merge slices, calculate thresholded image, backup main results
