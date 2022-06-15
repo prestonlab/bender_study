@@ -45,4 +45,6 @@ for roi in b_hip b_prc; do
     fslmaths "$res_dir/ab_cluster_mask" -mul "$res_dir/cb_cluster_mask" -bin "$res_dir/intersect_cluster_mask"
     fslmaths "$res_dir/ab_cluster_mask" -sub "$res_dir/cb_cluster_mask" -bin "$res_dir/ab_exclusive_cluster_mask"
     fslmaths "$res_dir/cb_cluster_mask" -sub "$res_dir/ab_cluster_mask" -bin "$res_dir/cb_exclusive_cluster_mask"
+
+    cp "$STUDYDIR"/gptemplate/highres_brain_all/gp_template_mni_affine.nii.gz "$res_dir"/bg_image.nii.gz
 done
