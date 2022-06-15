@@ -34,10 +34,12 @@ for roi in b_hip b_prc; do
     mkdir -p "$res_dir"
     imcp "$mask" "$res_dir/mask"
 
-    "$FSLDIR/bin/cluster" -i "$ab_dir/stat_thresh" -t 0.001 --minextent=120 --othresh="$res_dir/ab_large"
+    imcp "$ab_dir/stat_thresh" "$res_dir/ab"
+    "$FSLDIR/bin/cluster" -i "$res_dir/ab" -t 0.001 --minextent=120 --othresh="$res_dir/ab_large"
     fslmaths "$res_dir/ab_large" -mas "$res_dir/mask" -bin "$res_dir/ab_cluster_mask"
 
-    "$FSLDIR/bin/cluster" -i "$cb_dir/stat_thresh" -t 0.001 --minextent=120 --othresh="$res_dir/cb_large"
+    imcp "$cb_dir/stat_thresh" "$res_dir/cb"
+    "$FSLDIR/bin/cluster" -i "$res_dir/cb" -t 0.001 --minextent=120 --othresh="$res_dir/cb_large"
     fslmaths "$res_dir/cb_large" -mas "$res_dir/mask" -bin "$res_dir/cb_cluster_mask"
 
     fslmaths "$res_dir/ab_cluster_mask" -mul "$res_dir/cb_cluster_mask" -bin "$res_dir/intersect_cluster_mask"
