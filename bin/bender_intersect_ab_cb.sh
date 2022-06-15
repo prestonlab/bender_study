@@ -23,8 +23,6 @@ if [[ ! -d $cb_dir ]]; then
     echo "Error: CB results directory not found: $cb_dir"
 fi
 
-intersect_dir=$STUDYDIR/batch/rsa/intersect_ab_cb
-
 # hippocampus
 for roi in b_hip b_prc; do
     mask=$STUDYDIR/batch/glm/study_stim2/$roi/mask.nii.gz
