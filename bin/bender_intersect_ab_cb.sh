@@ -2,16 +2,18 @@
 #
 # Create intersection clusters for A>B and C>B contrasts.
 
-if (( $# < 2 )); then
-    echo "Usage: bender_intersect_ab_cb.sh ab_res_name cb_res_name"
+if (( $# < 3 )); then
+    echo "Usage: bender_intersect_ab_cb.sh ab_res_name cb_res_name intersect_res_name"
     exit 1
 fi
 
 ab_res_name=$1
 cb_res_name=$2
+intersect_res_name=$3
 
 ab_dir=$STUDYDIR/batch/rsa/$ab_res_name
 cb_dir=$STUDYDIR/batch/rsa/$cb_res_name
+intersect_dir=$STUDYDIR/batch/rsa/$intersect_res_name
 
 if [[ ! -d $ab_dir ]]; then
     echo "Error: AB results directory not found: $ab_dir"
