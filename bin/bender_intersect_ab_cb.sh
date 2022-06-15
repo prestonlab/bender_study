@@ -35,7 +35,7 @@ for roi in b_hip b_prc; do
     imcp "$mask" "$res_dir/mask"
 
     imcp "$ab_dir/stat_thresh" "$res_dir/ab"
-    "$FSLDIR/bin/cluster" -i "$res_dir/ab" -t 0.001 --minextent=10 --othresh="$res_dir/ab_clusters10"
+    "$FSLDIR/bin/cluster" -i "$res_dir/ab" -t 0.001 --minextent=10 --oindex="$res_dir/ab_clusters10"
     if [[ $roi = b_hip ]]; then
         index=217
     else
@@ -44,7 +44,7 @@ for roi in b_hip b_prc; do
     fslmaths "$res_dir/ab_clusters10" -thr "$index" -uthr "$index" -bin "$res_dir/ab_cluster_mask"
 
     imcp "$cb_dir/stat_thresh" "$res_dir/cb"
-    "$FSLDIR/bin/cluster" -i "$res_dir/cb" -t 0.001 --minextent=10 --othresh="$res_dir/cb_clusters10"
+    "$FSLDIR/bin/cluster" -i "$res_dir/cb" -t 0.001 --minextent=10 --oindex="$res_dir/cb_clusters10"
     if [[ $roi = b_hip ]]; then
         index=132
     else
