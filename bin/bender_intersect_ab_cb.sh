@@ -35,12 +35,22 @@ for roi in b_hip b_prc; do
     imcp "$mask" "$res_dir/mask"
 
     imcp "$ab_dir/stat_thresh" "$res_dir/ab"
-    "$FSLDIR/bin/cluster" -i "$res_dir/ab" -t 0.001 --minextent=120 --othresh="$res_dir/ab_large"
-    fslmaths "$res_dir/ab_large" -mas "$res_dir/mask" -bin "$res_dir/ab_cluster_mask"
+    "$FSLDIR/bin/cluster" -i "$res_dir/ab" -t 0.001 --minextent=10 --othresh="$res_dir/ab_clusters10"
+    if [[ $roi = b_hip ]]; then
+        index=217
+    else
+        index=225
+    fi
+    fslmaths "$res_dir/ab_clusters10" -thr "$index" -uthr "$index" -bin "$res_dir/ab_cluster_mask"
 
     imcp "$cb_dir/stat_thresh" "$res_dir/cb"
-    "$FSLDIR/bin/cluster" -i "$res_dir/cb" -t 0.001 --minextent=120 --othresh="$res_dir/cb_large"
-    fslmaths "$res_dir/cb_large" -mas "$res_dir/mask" -bin "$res_dir/cb_cluster_mask"
+    "$FSLDIR/bin/cluster" -i "$res_dir/cb" -t 0.001 --minextent=10 --othresh="$res_dir/cb_clusters10"
+    if [[ $roi = b_hip ]]; then
+        index=132
+    else
+        index=181
+    fi
+    fslmaths "$res_dir/cb_clusters10" -thr "$index" -uthr "$index" -bin "$res_dir/cb_cluster_mask"
 
     fslmaths "$res_dir/ab_cluster_mask" -mul "$res_dir/cb_cluster_mask" -bin "$res_dir/intersect_cluster_mask"
     fslmaths "$res_dir/ab_cluster_mask" -sub "$res_dir/cb_cluster_mask" -bin "$res_dir/ab_exclusive_cluster_mask"
