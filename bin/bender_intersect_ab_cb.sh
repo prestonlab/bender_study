@@ -37,7 +37,7 @@ for roi in b_hip b_prc; do
     imcp "$ab_dir/stat_thresh" "$res_dir/ab"
     "$FSLDIR/bin/cluster" -i "$res_dir/ab" -t 0.001 --minextent=10 --oindex="$res_dir/ab_clusters10"
     if [[ $roi = b_hip ]]; then
-        index=217
+        index=216
     else
         index=225
     fi
