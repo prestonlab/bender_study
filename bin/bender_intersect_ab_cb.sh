@@ -42,5 +42,7 @@ for roi in b_hip b_prc; do
     "$FSLDIR/bin/cluster" -i "$cb_dir/stat_thresh" -t 0.001 --minextent=120 --othresh="$res_dir/cb_large"
     fslmaths "$res_dir/cb_large" -mas "$res_dir/mask" -bin "$res_dir/cb_cluster_mask"
 
-    fslmaths "$res_dir/ab_cluster_mask" -mul "$res_dir/cb_cluster_mask" "$res_dir/intersect_cluster_mask"
+    fslmaths "$res_dir/ab_cluster_mask" -mul "$res_dir/cb_cluster_mask" -bin "$res_dir/intersect_cluster_mask"
+    fslmaths "$res_dir/ab_cluster_mask" -min "$res_dir/cb_cluster_mask" -bin "$res_dir/ab_exclusive_cluster_mask"
+    fslmaths "$res_dir/cb_cluster_mask" -min "$res_dir/ab_cluster_mask" -bin "$res_dir/cb_exclusive_cluster_mask"
 done
