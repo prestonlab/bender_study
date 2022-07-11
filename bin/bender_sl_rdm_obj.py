@@ -14,16 +14,6 @@ parser.add_argument(
 parser.add_argument(
     "--cat", "-c", default=None, help="category to include (face,scene,[both])"
 )
-parser.add_argument(
-    "--rec",
-    "-e",
-    default=None,
-    type=int,
-    help="subsequent recall condition to include (0,1)",
-)
-parser.add_argument(
-    "--measure", "-m", default="sme", help="measure to calculate ('bcxy',['sme'])"
-)
 parser.add_argument("--suffix", "-s", help="suffix for beta images", default="_stim")
 parser.add_argument("--radius", "-r", type=int, default=3, help="searchlight radius")
 parser.add_argument(
@@ -71,35 +61,33 @@ ind = np.argsort(ds.sa.group)
 ds = ds[ind, :]
 zscore(ds, chunks_attr="chunks")
 
-if args.measure == "bcxy":
-    cond = np.zeros(ds.shape[0])
-    cond[ds.sa.cond != 5] = 1
-    cond[ds.sa.cond == 5] = 2
-elif args.measure == "sme":
-    inc = ds.sa.cond < 5
-    n_trial = ds.shape[0]
-    ds = ds[inc, :]
-    for i in range(len(models)):
-        if models[i].shape[0] == n_trial:
-            models[i] = models[i][np.ix_(inc, inc)]
-    test = bp.read_period("ac_test", 5.5)
-    correct = test.sort("group").array("correct")
+# get BC trials
+inc = ds.sa.cond < 5
+n_trial = ds.shape[0]
+ds = ds[inc, :]
+for i in range(len(models)):
+    if models[i].shape[0] == n_trial:
+        models[i] = models[i][np.ix_(inc, inc)]
 
-    # sorted condition values are used to set the interaction, so set
-    # correct items to the lower value in the conditions
-    # vector.
+# add AC test accuracy
+test = bp.read_period("ac_test", 5.5)
+correct = test.sort("group").array("correct")
 
-    # (correct: model 1 - model 2) - (incorrect: model 1 - model 2)
-    cond = np.zeros(ds.shape[0])
-    cond[correct == 1] = 1
-    cond[correct == 0] = 2
+# sorted condition values are used to set the interaction, so set
+# correct items to the lower value in the conditions
+# vector.
 
-    # re-sort the dataset and models to be in condition order
-    ind = np.argsort(cond)
-    ds = ds[ind, :]
-    cond = cond[ind]
-    for i in range(len(models)):
-        models[i] = models[i][np.ix_(ind, ind)]
+# (correct: model 1 - model 2) - (incorrect: model 1 - model 2)
+cond = np.zeros(ds.shape[0])
+cond[correct == 1] = 1
+cond[correct == 0] = 2
+
+# re-sort the dataset and models to be in condition order
+ind = np.argsort(cond)
+ds = ds[ind, :]
+cond = cond[ind]
+for i in range(len(models)):
+    models[i] = models[i][np.ix_(ind, ind)]
 
 m = sim_model.SimModelCond(cond, models, args.n_perm, output=args.output)
 sl = sphere_searchlight(m, radius=args.radius, nproc=args.n_proc)
