@@ -51,7 +51,7 @@ from mvpa2.measures.searchlight import sphere_searchlight
 
 from bender_study import patio
 from bender_study import bender
-from bender_study import sim_react
+from bender_study import rsa
 
 
 bp = bender.BenderPath(args.subject, args.study_dir)
@@ -126,7 +126,7 @@ if args.measure in ["item_react", "item_suppress"]:
         stat = "react"
     else:
         stat = "suppress"
-    m = sim_react.SimItemReact(
+    m = rsa.SimItemReact(
         ds_full.sa.dataset, category, args.n_perm, stat=stat, output=args.output
     )
 elif args.measure in [
@@ -142,7 +142,7 @@ elif args.measure in [
         stat = "react_sme"
     else:
         stat = "suppress_sme"
-    m = sim_react.SimItemReactSME(
+    m = rsa.SimItemReactSME(
         ds_full.sa.dataset,
         category,
         correct,

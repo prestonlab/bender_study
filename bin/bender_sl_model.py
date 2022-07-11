@@ -33,7 +33,7 @@ from mvpa2.mappers.zscore import zscore
 from mvpa2.measures.searchlight import sphere_searchlight
 
 from bender_study import bender
-from bender_study import sim_model
+from bender_study import rsa
 
 bp = bender.BenderPath(args.subject, args.study_dir)
 mask_file = bp.image_path("anatomy", "bbreg", "data", args.mask)
@@ -89,7 +89,7 @@ cond = cond[ind]
 for i in range(len(models)):
     models[i] = models[i][np.ix_(ind, ind)]
 
-m = sim_model.SimModelCond(cond, models, args.n_perm, output=args.output)
+m = rsa.SimModelCond(cond, models, args.n_perm, output=args.output)
 sl = sphere_searchlight(m, radius=args.radius, nproc=args.n_proc)
 slmap = sl(ds)
 
