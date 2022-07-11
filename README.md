@@ -47,15 +47,15 @@ Basic preprocessing was done using fPrep 1.0.0 (originally called FAT). See the 
 * `slaunch -J estimate_betaseries "bender_estimate_betaseries.py {} prex_stim2 40" $SUBJIDS`
 
 ### Searchlight statmaps
-* `slaunch -J sl_item_react "bender_sl_item.py {} brainmask cat_react_item2 item_react -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128: $SUBJIDS`
+* `slaunch -J sl_item_react "bender_sl_item.py {} brainmask cat_react_item2 item_react -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128" $SUBJIDS`
   * Run a searchlight looking for item reactivation during BC study. 
-* `slaunch -J sl_item_suppress "bender_sl_item.py {} brainmask item_suppress_gvt item_suppress -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128: $SUBJIDS`
+* `slaunch -J sl_item_suppress "bender_sl_item.py {} brainmask item_suppress_gvt item_suppress -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128" $SUBJIDS`
   * Run a searchlight looking for item suppression during BC study. 
-* `slaunch -J sl_item_react_sme "bender_sl_item.py {} brainmask cat_react_item_sme2 item_react_sme -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128: $SUBJIDS`
+* `slaunch -J sl_item_react_sme "bender_sl_item.py {} brainmask cat_react_item_sme2 item_react_sme -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128" $SUBJIDS`
   * Run a searchlight looking for item reactivation that predicts AC accuracy.
-* `slaunch -J sl_model "bender_sl_model.py {} brainmask a-bcxy study_wiki_w2v_fix_cont_a_bc_sme -s _stim2 -p 100 -n 48" $SUBJIDS`
+* `slaunch -J sl_model "bender_sl_model.py {} brainmask a-bcxy study_wiki_w2v_fix_cont_a_bc_sme -s _stim2 -p 100 -n 128" $SUBJIDS`
   * Run a searchlight over study-phase item betaseries images, to find where the A model correlation minus the BC model correlation is greater for correct compared to incorrect trials. 
-* `slaunch -J sl_model "bender_sl_model.py {} brainmask ac-bx study_wiki_w2v_fix_cont_ac_bx_sme -s _stim2 -p 100 -n 48" $SUBJIDS`
+* `slaunch -J sl_model "bender_sl_model.py {} brainmask ac-bx study_wiki_w2v_fix_cont_ac_bx_sme -s _stim2 -p 100 -n 128" $SUBJIDS`
   * Run a searchlight over study-phase item betaseries images, to find where the AC model correlation minus the B model correlation is greater for correct compared to incorrect trials.
 
 ### Searchlight statistical analysis
