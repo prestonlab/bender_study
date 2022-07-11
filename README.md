@@ -58,4 +58,22 @@ Basic preprocessing was done using fPrep 1.0.0 (originally called FAT). See the 
 * `slaunch -J sl_model "bender_sl_model.py {} brainmask ac-bx study_wiki_w2v_fix_cont_ac_bx_sme -s _stim2 -p 100 -n 128" $SUBJIDS`
   * Run a searchlight over study-phase item betaseries images, to find where the AC model correlation minus the B model correlation is greater for correct compared to incorrect trials.
 
-### Searchlight statistical analysis
+### Searchlight group analysis
+
+* `bender_run_gvt.sh -m /work/03206/mortonne/lonestar/bender/gptemplate/highres_brain_all/gp_template_mni_affine_mask.nii.gz -i BSpline -a 0.01 -p 100 mvpa/cat_react_item2 $SUBJNOS`
+  * Run all steps of group voxel threshold analysis.
+* `rlaunch -J res_smoothness "bender_res_smoothness.sh {s} {r} study_stim2 $WORK/bender/gptemplate/highres_brain_all/b_gray.nii.gz 128" $SUBJIDS $STUDYRUNS`
+  * Estimate smoothness for each run within a given mask.
+* `bender_clustsim_res.sh $SUBJNOS $STUDYRUNS study_stim2 $WORK/bender/gptemplate/highres_brain_all/b_gray.nii.gz`
+  * Calculate average smoothness and run 3dClustSim to estimate a null distribution of cluster sizes. 
+* `bender_svc.sh mvpa/cat_react_item2 study_stim2 b_phc b_prc b_ifg_insula b_mpfc b_gray`
+  * Display cluster correction results for the specified ROIs. 
+
+### Searchlight followup analysis
+
+* `bender_sl_rois.sh`
+  * Create individual participant masks for significant searchlight clusters.
+* `bender_indiv_react.py cat_react_item2_lprc_dil1c -s _stim2`
+  * Calculate individual reactivation dissimilarity matrices (pre-exposure to study phase).
+* `bender_indiv_rdm.py cat_react_item2_lprc_dil1c -s _stim2`
+  * Calculate individual representational dissimilarity matrices during the study phase.
