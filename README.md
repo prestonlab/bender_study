@@ -40,7 +40,7 @@ Basic preprocessing was done using fPrep 1.0.0 (originally called FAT). See the 
 * Reorganize files and merge across days
   * `slaunch -J clean_subj "bender_clean_subj.py {}" $SUBJIDS`
 * Preprocess BOLD scans
-  * `rlaunch -J prep_bold "prep_bold_run.sh $STUDYDIR/{s}/BOLD/{r}" $SUBJIDS $RUNIDS` 
+  * `rlaunch -J prep_bold "prep_bold_run.sh $STUDYDIR/{s}/BOLD/{r}" $SUBJIDS $ALLRUNS` 
 * Run cortical reconstruction
   * `slaunch -J run_freesurfer "run_freesurfer.sh {} 32" $SUBJIDS` 
 * Convert FreeSurfer output
@@ -58,8 +58,8 @@ Basic preprocessing was done using fPrep 1.0.0 (originally called FAT). See the 
 ### Smoothing and filtering
 
 * Apply spatial smoothing and temporal filtering to pre-exposure and study data
-  * `rlaunch -J "smooth_susan bender_smooth_susan.sh -f 32 -v /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r} /work/03206/mortonne/lonestar/bender/{s}/BOLD/{r}/fm/brainmask 4.0 /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r}_hpfsm" $SUBJIDS $PREXRUNS`
-  * `rlaunch -J "smooth_susan bender_smooth_susan.sh -f 32 -v /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r} /work/03206/mortonne/lonestar/bender/{s}/BOLD/{r}/fm/brainmask 4.0 /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r}_hpfsm" $SUBJIDS $STUDYRUNS`
+  * `rlaunch -J smooth_susan "bender_smooth_susan.sh -f 32 -v /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r} /work/03206/mortonne/lonestar/bender/{s}/BOLD/{r}/fm/brainmask 4.0 /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r}_hpfsm" $SUBJIDS $PREXRUNS`
+  * `rlaunch -J smooth_susan "bender_smooth_susan.sh -f 32 -v /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r} /work/03206/mortonne/lonestar/bender/{s}/BOLD/{r}/fm/brainmask 4.0 /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r}_hpfsm" $SUBJIDS $STUDYRUNS`
 
 ### Betaseries estimation
 
