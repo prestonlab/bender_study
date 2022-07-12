@@ -25,7 +25,7 @@ cd bender_study || git clone git@github.com:prestonlab/bender_study.git && cd be
 pip install -e .
 ```
 
-Set up environment to run scripts (run on each login):
+Set up environment to run scripts (run on each login). The `.profile` will need to be edited for your specific setup (e.g., indicating where the data are located and where figures should be saved).
 
 ```bash
 . ~/analysis/bender_study/.profile
