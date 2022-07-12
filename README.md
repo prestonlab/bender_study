@@ -35,6 +35,26 @@ Set up environment to run scripts (run on each login):
 
 Basic preprocessing was done using fPrep 1.0.0 (originally called FAT). See the fPrep project for details. After basic preprocessing, functional data were motion-corrected, unwarped, and registered into a common space. Also had anatomical ROIs derived from FreeSurfer 5.3.0.
 
+* Convert DICOM files to NIfTI
+  * `bender_init.sh bender_02`
+* Reorganize files and merge across days
+  * `slaunch -J clean_subj "bender_clean_subj.py {}" $SUBJIDS`
+* Preprocess BOLD scans
+  * `rlaunch -J prep_bold "prep_bold_run.sh $STUDYDIR/{s}/BOLD/{r}" $SUBJIDS $RUNIDS` 
+* Run cortical reconstruction
+  * `slaunch -J run_freesurfer "run_freesurfer.sh {} 32" $SUBJIDS` 
+* Convert FreeSurfer output
+  * `slaunch -J convert_freesurfer "convert_freesurfer.py {}" $SUBJIDS`
+* Register FreeSurfer output to main images
+  * `slaunch -J reg_freesurfer "reg_freesurfer.py {}" $SUBJIDS`
+* Prepare fieldmap images for unwarping
+  * `slaunch -J prep_fieldmap "bender_prep_fieldmap.py {}" $SUBJIDS`
+  * May need to adjust the `--dte` option for subsets of participants, as scanning parameters changed about halfway through scanning
+* Calculate unwarping of BOLD scans
+  * `rlaunch -J epi_reg "bender_epi_reg_run.py {s} {r}" $SUBJIDS $ALLRUNS` 
+* Unwarp and co-register BOLD scans
+  * `rlaunch -J reg_unwarp "reg_unwarp_bold_run.py {s} {r} study_1" $SUBJIDS $ALLRUNS` 
+  
 ### Smoothing and filtering
 
 * `rlaunch -J "smooth_susan bender_smooth_susan.sh -f 32 -v /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r} /work/03206/mortonne/lonestar/bender/{s}/BOLD/{r}/fm/brainmask 4.0 /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r}_hpfsm" $SUBJIDS $PREXRUNS`
