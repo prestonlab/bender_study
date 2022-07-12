@@ -1,0 +1,21 @@
+{
+    "language": "eng",
+    "license": "GPL-3.0+",
+    "title": "Bender study: Pattern analysis of memory reactivation, suppression, and integration",
+    "upload_type": "software",
+    "creators": [
+        {
+            "name": "Neal W Morton",
+            "orcid": "0000-0002-2631-2710",
+            "affiliation": "The University of Texas at Austin"
+        }
+    ],
+    "keywords": [
+        "psychology",
+        "neuroscience",
+        "Python",
+        "neuroimaging",
+        "fMRI"
+    ],
+    "access_right": "open"
+}
