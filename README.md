@@ -99,3 +99,17 @@ Basic preprocessing was done using fPrep 1.0.0 (originally called FAT). See the 
   * `bender_indiv_react.py cat_react_item2_lprc_dil1c -s _stim2`
 * Calculate individual representational dissimilarity matrices during the study phase.
   * `bender_indiv_rdm.py cat_react_item2_lprc_dil1c -s _stim2`
+
+### Analysis notebooks
+
+Notebooks are stored in the `jupyter` directory. To run, install Jupyter Lab and the notebook kernel using: 
+
+```bash
+pip install jupyterlab
+python -m ipykernel install --user --name bender_study
+```
+
+You must have your virtual environment installed when you run this. Launch Jupyter Lab using `jupyter lab &`.
+
+* Analyze behavioral test performance and plot.
+  * `plot_behav.ipynb` 
