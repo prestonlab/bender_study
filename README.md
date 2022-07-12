@@ -57,43 +57,45 @@ Basic preprocessing was done using fPrep 1.0.0 (originally called FAT). See the 
   
 ### Smoothing and filtering
 
-* `rlaunch -J "smooth_susan bender_smooth_susan.sh -f 32 -v /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r} /work/03206/mortonne/lonestar/bender/{s}/BOLD/{r}/fm/brainmask 4.0 /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r}_hpfsm" $SUBJIDS $PREXRUNS`
-* `rlaunch -J "smooth_susan bender_smooth_susan.sh -f 32 -v /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r} /work/03206/mortonne/lonestar/bender/{s}/BOLD/{r}/fm/brainmask 4.0 /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r}_hpfsm" $SUBJIDS $STUDYRUNS`
+* Apply spatial smoothing and temporal filtering to pre-exposure and study data
+  * `rlaunch -J "smooth_susan bender_smooth_susan.sh -f 32 -v /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r} /work/03206/mortonne/lonestar/bender/{s}/BOLD/{r}/fm/brainmask 4.0 /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r}_hpfsm" $SUBJIDS $PREXRUNS`
+  * `rlaunch -J "smooth_susan bender_smooth_susan.sh -f 32 -v /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r} /work/03206/mortonne/lonestar/bender/{s}/BOLD/{r}/fm/brainmask 4.0 /work/03206/mortonne/lonestar/bender/{s}/BOLD/antsreg/data/{r}_hpfsm" $SUBJIDS $STUDYRUNS`
 
 ### Betaseries estimation
 
 * Set up model FSF files using FEAT. This would have involved first creating a template FSF file for one participant, and then modifying that template using string substitution in sed.
-* `slaunch -J estimate_betaseries "bender_estimate_betaseries.py {} study_stim2 30" $SUBJIDS`
-* `slaunch -J estimate_betaseries "bender_estimate_betaseries.py {} prex_stim2 40" $SUBJIDS`
+* Estimate betaseries images with activation of each item in each run, for both pre-exposure and study data.
+  * `slaunch -J estimate_betaseries "bender_estimate_betaseries.py {} prex_stim2 40" $SUBJIDS`
+  * `slaunch -J estimate_betaseries "bender_estimate_betaseries.py {} study_stim2 30" $SUBJIDS`
 
 ### Searchlight statmaps
-* `slaunch -J sl_item_react "bender_sl_item.py {} brainmask cat_react_item2 item_react -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128" $SUBJIDS`
-  * Run a searchlight looking for item reactivation during BC study. 
-* `slaunch -J sl_item_suppress "bender_sl_item.py {} brainmask item_suppress_gvt item_suppress -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128" $SUBJIDS`
-  * Run a searchlight looking for item suppression during BC study. 
-* `slaunch -J sl_item_react_sme "bender_sl_item.py {} brainmask cat_react_item_sme2 item_react_sme -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128" $SUBJIDS`
-  * Run a searchlight looking for item reactivation that predicts AC accuracy.
-* `slaunch -J sl_model "bender_sl_model.py {} brainmask a-bcxy study_wiki_w2v_fix_cont_a_bc_sme -s _stim2 -p 100 -n 128" $SUBJIDS`
-  * Run a searchlight over study-phase item betaseries images, to find where the A model correlation minus the BC model correlation is greater for correct compared to incorrect trials. 
-* `slaunch -J sl_model "bender_sl_model.py {} brainmask ac-bx study_wiki_w2v_fix_cont_ac_bx_sme -s _stim2 -p 100 -n 128" $SUBJIDS`
-  * Run a searchlight over study-phase item betaseries images, to find where the AC model correlation minus the B model correlation is greater for correct compared to incorrect trials.
+* Run a searchlight looking for item reactivation during BC study. 
+  * `slaunch -J sl_item_react "bender_sl_item.py {} brainmask cat_react_item2 item_react -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128" $SUBJIDS`
+* Run a searchlight looking for item suppression during BC study. 
+  * `slaunch -J sl_item_suppress "bender_sl_item.py {} brainmask item_suppress_gvt item_suppress -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128" $SUBJIDS`
+* Run a searchlight looking for item reactivation that predicts AC accuracy.
+  * `slaunch -J sl_item_react_sme "bender_sl_item.py {} brainmask cat_react_item_sme2 item_react_sme -o full -c both -d cat -s _stim2 -r 3 -p 100 -n 128" $SUBJIDS`
+* Run a searchlight over study-phase item betaseries images, to find where the A model correlation minus the BC model correlation is greater for correct compared to incorrect trials. 
+  * `slaunch -J sl_model "bender_sl_model.py {} brainmask a-bcxy study_wiki_w2v_fix_cont_a_bc_sme -s _stim2 -p 100 -n 128" $SUBJIDS`
+* Run a searchlight over study-phase item betaseries images, to find where the AC model correlation minus the B model correlation is greater for correct compared to incorrect trials.
+  * `slaunch -J sl_model "bender_sl_model.py {} brainmask ac-bx study_wiki_w2v_fix_cont_ac_bx_sme -s _stim2 -p 100 -n 128" $SUBJIDS`
 
 ### Searchlight group analysis
 
-* `bender_run_gvt.sh -m /work/03206/mortonne/lonestar/bender/gptemplate/highres_brain_all/gp_template_mni_affine_mask.nii.gz -i BSpline -a 0.01 -p 100 mvpa/cat_react_item2 $SUBJNOS`
-  * Run all steps of group voxel threshold analysis.
-* `rlaunch -J res_smoothness "bender_res_smoothness.sh {s} {r} study_stim2 $WORK/bender/gptemplate/highres_brain_all/b_gray.nii.gz 128" $SUBJIDS $STUDYRUNS`
-  * Estimate smoothness for each run within a given mask.
-* `bender_clustsim_res.sh $SUBJNOS $STUDYRUNS study_stim2 $WORK/bender/gptemplate/highres_brain_all/b_gray.nii.gz`
-  * Calculate average smoothness and run 3dClustSim to estimate a null distribution of cluster sizes. 
-* `bender_svc.sh mvpa/cat_react_item2 study_stim2 b_phc b_prc b_ifg_insula b_mpfc b_gray`
-  * Display cluster correction results for the specified ROIs. 
+* Run all steps of group voxel threshold analysis.
+  * `bender_run_gvt.sh -m /work/03206/mortonne/lonestar/bender/gptemplate/highres_brain_all/gp_template_mni_affine_mask.nii.gz -i BSpline -a 0.01 -p 100 mvpa/cat_react_item2 $SUBJNOS`
+* Estimate smoothness for each run within a given mask.
+  * `rlaunch -J res_smoothness "bender_res_smoothness.sh {s} {r} study_stim2 $WORK/bender/gptemplate/highres_brain_all/b_gray.nii.gz 128" $SUBJIDS $STUDYRUNS`
+* Calculate average smoothness and run 3dClustSim to estimate a null distribution of cluster sizes. 
+  * `bender_clustsim_res.sh $SUBJNOS $STUDYRUNS study_stim2 $WORK/bender/gptemplate/highres_brain_all/b_gray.nii.gz`
+* Display cluster correction results for the specified ROIs. 
+  * `bender_svc.sh mvpa/cat_react_item2 study_stim2 b_phc b_prc b_ifg_insula b_mpfc b_gray`
 
 ### Searchlight followup analysis
 
-* `bender_sl_rois.sh`
-  * Create individual participant masks for significant searchlight clusters.
-* `bender_indiv_react.py cat_react_item2_lprc_dil1c -s _stim2`
-  * Calculate individual reactivation dissimilarity matrices (pre-exposure to study phase).
-* `bender_indiv_rdm.py cat_react_item2_lprc_dil1c -s _stim2`
-  * Calculate individual representational dissimilarity matrices during the study phase.
+* Create individual participant masks for significant searchlight clusters.
+  * `bender_sl_rois.sh`
+* Calculate individual reactivation dissimilarity matrices (pre-exposure to study phase).
+  * `bender_indiv_react.py cat_react_item2_lprc_dil1c -s _stim2`
+* Calculate individual representational dissimilarity matrices during the study phase.
+  * `bender_indiv_rdm.py cat_react_item2_lprc_dil1c -s _stim2`
