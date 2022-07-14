@@ -72,7 +72,7 @@ class SimItemReact(Measure, ABC):
             # scramble items within category
             n_cat_item = len(cat_ind)
             rand_ind = [
-                random.sample(range(n_cat_item), n_cat_item) for i in range(n_perm)
+                random.sample(range(n_cat_item), n_cat_item) for _ in range(n_perm)
             ]
             rand_ind.insert(0, list(range(n_cat_item)))
 
@@ -165,7 +165,7 @@ class SimItemReactSME(Measure, ABC):
             # scramble items within category
             n_cat_item = len(cat_ind)
             rand_ind = [
-                random.sample(range(n_cat_item), n_cat_item) for i in range(n_perm)
+                random.sample(range(n_cat_item), n_cat_item) for _ in range(n_perm)
             ]
             rand_ind.insert(0, list(range(n_cat_item)))
 
