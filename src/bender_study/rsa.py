@@ -74,7 +74,7 @@ class SimItemReact(Measure, ABC):
             rand_ind = [
                 random.sample(range(n_cat_item), n_cat_item) for i in range(n_perm)
             ]
-            rand_ind.insert(0, range(n_cat_item))
+            rand_ind.insert(0, list(range(n_cat_item)))
 
             # within- and between-item indices
             w_ind = []
@@ -167,7 +167,7 @@ class SimItemReactSME(Measure, ABC):
             rand_ind = [
                 random.sample(range(n_cat_item), n_cat_item) for i in range(n_perm)
             ]
-            rand_ind.insert(0, range(n_cat_item))
+            rand_ind.insert(0, list(range(n_cat_item)))
 
             # indices to calculate interaction: (wr - br) - (wf - bf)
             iwr = []
