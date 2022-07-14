@@ -6,6 +6,7 @@ import numpy as np
 import scipy.stats as stats
 from scipy.spatial.distance import cdist, pdist, squareform
 from mvpa2.measures.base import Measure
+import pandas as pd
 
 
 def unique_ordered(a):
@@ -325,3 +326,30 @@ class SimModelCond(Measure):
             return tuple(stat_perm)
         else:
             return perm_z(stat_perm)
+
+
+def reactivation_stats(subjects, rdms, dfs):
+    """Statistics of similarity between pre-exposure and study patterns."""
+    results_list = []
+    for rdm, df in zip(rdms, dfs):
+        # selector for self pairs
+        pair_self = np.eye(df.shape[0], dtype=bool)
+
+        # selector for within-category pairs
+        category = df['category'].to_numpy()
+        pair_within = category == category[:, np.newaxis]
+
+        # transform to Fisher z of correlation
+        z = np.arctanh(1 - rdm)
+
+        # calculate statistics
+        res = pd.Series(
+            {
+                'item': np.mean(z[pair_self]),
+                'within': np.mean(z[~pair_self & pair_within]),
+                'between': np.mean(z[~pair_within]),
+            }
+        )
+        results_list.append(res)
+    results = pd.DataFrame(results_list, index=subjects)
+    return results
