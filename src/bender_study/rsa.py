@@ -328,7 +328,7 @@ class SimModelCond(Measure):
             return perm_z(stat_perm)
 
 
-def reactivation_stats(subjects, rdms, dfs):
+def rdm_reactivation_stats(subjects, rdms, dfs):
     """Statistics of similarity between pre-exposure and study patterns."""
     results_list = []
     for rdm, df in zip(rdms, dfs):
