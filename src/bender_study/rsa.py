@@ -1,5 +1,6 @@
 """Module for analysis of pattern similarity evidence of reactivation."""
 
+from pathlib import Path
 import random
 
 import numpy as np
@@ -326,6 +327,19 @@ class SimModelCond(Measure):
             return tuple(stat_perm)
         else:
             return perm_z(stat_perm)
+
+
+def load_roi_rdms(rdm_dir, subjects, rois, analyses, clusters, suffix):
+    """Load RDMs for multiple ROIs."""
+    rdm_dir = Path(rdm_dir)
+    rdms = {
+        roi: [
+            np.loadtxt(
+                rdm_dir / f'{analysis}_{cluster}_{suffix}' / f'bender_{s}_rdm.txt'
+            ) for s in subjects
+        ] for analysis, cluster, roi in zip(analyses, clusters, rois)
+    }
+    return rdms
 
 
 def rdm_reactivation_stats(subjects, rdms, dfs):
