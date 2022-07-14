@@ -1,7 +1,6 @@
 """Module for analysis of pattern similarity evidence of reactivation."""
 
 import random
-from abc import ABC
 
 import numpy as np
 import scipy.stats as stats
@@ -36,7 +35,7 @@ def perm_z(stat_perm):
     return stats.norm.ppf(1 - p)
 
 
-class SimItemReact(Measure, ABC):
+class SimItemReact(Measure):
     """Test for reactivation of item patterns.
 
     Calculate similarity of items between two phases, and contrast
@@ -114,7 +113,7 @@ class SimItemReact(Measure, ABC):
             return perm_z(stat_perm)
 
 
-class SimItemReactSME(Measure, ABC):
+class SimItemReactSME(Measure):
     """Test whether reactivation of items patterns predicts memory.
 
     Calculate similarity of items between two phases, and contrast
@@ -229,7 +228,7 @@ class SimItemReactSME(Measure, ABC):
             return perm_z(stat_perm)
 
 
-class SimModelCond(Measure, ABC):
+class SimModelCond(Measure):
     def __init__(self, cond, model_rdms, n_perm, output="full"):
         """Contrast similarity between model and neural data by condition.
 
