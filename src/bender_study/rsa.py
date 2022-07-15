@@ -369,3 +369,14 @@ def rdm_reactivation_stats(subjects, rdms, dfs):
     results['item'] = results['self'] - results['within']
     results['category'] = results['within'] - results['between']
     return results
+
+
+def reactivation_stats(subjects, roi_rdms, dfs):
+    """Reactivation statistics for multiple ROIs."""
+    stats_list = []
+    for roi, rdms in roi_rdms.items():
+        results = rdm_reactivation_stats(subjects, rdms, dfs)
+        stats_list.append(results)
+    stats = pd.concat(stats_list, keys=roi_rdms.keys())
+    stats.index.rename(['roi', 'subject'], inplace=True)
+    return stats
