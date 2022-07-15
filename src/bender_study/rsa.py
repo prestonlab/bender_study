@@ -359,11 +359,13 @@ def rdm_reactivation_stats(subjects, rdms, dfs):
         # calculate statistics
         res = pd.Series(
             {
-                'item': np.mean(z[pair_self]),
+                'self': np.mean(z[pair_self]),
                 'within': np.mean(z[~pair_self & pair_within]),
                 'between': np.mean(z[~pair_within]),
             }
         )
         results_list.append(res)
     results = pd.DataFrame(results_list, index=subjects)
+    results['item'] = results['self'] - results['within']
+    results['category'] = results['within'] - results['between']
     return results
