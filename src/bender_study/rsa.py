@@ -5,6 +5,7 @@ import random
 
 import numpy as np
 import scipy.stats as stats
+import statsmodels.api as sm
 import pandas as pd
 
 
@@ -86,3 +87,48 @@ def reactivation_stats(subjects, roi_rdms, dfs):
     stats = pd.concat(stats_list, keys=roi_rdms.keys())
     stats.index.rename(['roi', 'subject'], inplace=True)
     return stats
+
+
+def item_roi_correlation(subjects, roi1, roi2, roi_rdms, dfs):
+    """Correlation between item reactivation in two ROIs."""
+    results_list = []
+    for subject, rdm1, rdm2, df in zip(subjects, roi_rdms[roi1], roi_rdms[roi2], dfs):
+        # Fisher z of correlation
+        item1 = np.diag(np.arctanh(1 - rdm1))
+        item2 = np.diag(np.arctanh(1 - rdm2))
+
+        # AC test performance for each group
+        correct = df['AC'].to_numpy()
+
+        # category of the A item
+        category = df['category'].to_numpy()
+        categories = np.unique(category)
+        for a in [1, 0]:
+            for c in categories:
+                include = (correct == a) & (category == c)
+                if np.count_nonzero(include) >= 3:
+                    # ROI pair correlation for this accuracy and category bin
+                    x = item1[include]
+                    y = item2[include]
+                    exog = sm.add_constant(x)
+                    rlm = sm.RLM(y, exog, M=sm.robust.norms.TukeyBiweight())
+                    rlm_res = rlm.fit()
+                    slope = rlm_res.params[1]
+                else:
+                    # correlation undefined if less than 3 included trials
+                    slope = np.nan
+
+                # package stats for this ROI pair and bin
+                r = pd.Series(
+                    {
+                        'subject': subject,
+                        'roi1': roi1,
+                        'roi2': roi2,
+                        'correct': a,
+                        'category': c,
+                        'slope': slope,
+                    }
+                )
+                results_list.append(r)
+    item_corr = pd.DataFrame(results_list)
+    return item_corr
