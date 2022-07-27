@@ -98,7 +98,8 @@ def item_roi_correlation(subjects, roi1, roi2, roi_rdms, dfs):
         item2 = np.diag(np.arctanh(1 - rdm2))
 
         # AC test performance for each group
-        correct = df['AC'].to_numpy()
+        # no-response trials scored as incorrect
+        correct = df['AC'].fillna(0).to_numpy()
 
         # category of the A item
         category = df['category'].to_numpy()
