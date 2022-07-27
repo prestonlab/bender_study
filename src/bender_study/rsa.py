@@ -107,7 +107,7 @@ def item_roi_correlation(subjects, roi1, roi2, roi_rdms, dfs):
         for a in [1, 0]:
             for c in categories:
                 include = (correct == a) & (category == c)
-                if np.count_nonzero(include) >= 3:
+                if np.count_nonzero(include) >= 5:
                     # ROI pair correlation for this accuracy and category bin
                     x = item1[include]
                     y = item2[include]
