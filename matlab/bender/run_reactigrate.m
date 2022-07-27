@@ -1,12 +1,11 @@
 
 %% path setup
 
-addpath('~/analysis/aperture')
+addpath('~/matlab/aperture')
 init_aperture()
-addpath('~/analysis/bender/matlab')
-addpath('~/analysis/wiki2vec/ana')
-addpath('~/analysis/pat/ana')
-addpath('~/analysis/aperture/plotting/figures')
+addpath('~/PycharmProjects/wiki2vec/ana')
+addpath('~/PycharmProjects/bender_study/matlab/bender')
+addpath('~/PycharmProjects/bender_study/matlab/pat')
 
 %% colormaps
 
