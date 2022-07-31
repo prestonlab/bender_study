@@ -89,7 +89,21 @@ def reactivation_stats(subjects, roi_rdms, dfs):
     return stats
 
 
-def item_roi_correlation(subjects, roi1, roi2, roi_rdms, dfs):
+def robust_slope(x, y, min_count=5):
+    """Calculate slope based on robust regression"""
+    if len(x) >= min_count:
+        # ROI pair correlation for this accuracy and category bin
+        exog = sm.add_constant(x)
+        rlm = sm.RLM(y, exog, M=sm.robust.norms.TukeyBiweight())
+        rlm_res = rlm.fit()
+        slope = rlm_res.params[1]
+    else:
+        # correlation undefined if less than 3 included trials
+        slope = np.nan
+    return slope
+
+
+def item_roi_correlation(subjects, roi1, roi2, roi_rdms, dfs, split_accuracy=False):
     """Correlation between item reactivation in two ROIs."""
     results_list = []
     for subject, rdm1, rdm2, df in zip(subjects, roi_rdms[roi1], roi_rdms[roi2], dfs):
@@ -97,37 +111,42 @@ def item_roi_correlation(subjects, roi1, roi2, roi_rdms, dfs):
         item1 = np.diag(np.arctanh(1 - rdm1))
         item2 = np.diag(np.arctanh(1 - rdm2))
 
-        # AC test performance for each group
-        # no-response trials scored as incorrect
-        correct = df['AC'].fillna(0).to_numpy()
-
         # category of the A item
         category = df['category'].to_numpy()
         categories = np.unique(category)
-        for a in [1, 0]:
-            for c in categories:
-                include = (correct == a) & (category == c)
-                if np.count_nonzero(include) >= 5:
-                    # ROI pair correlation for this accuracy and category bin
-                    x = item1[include]
-                    y = item2[include]
-                    exog = sm.add_constant(x)
-                    rlm = sm.RLM(y, exog, M=sm.robust.norms.TukeyBiweight())
-                    rlm_res = rlm.fit()
-                    slope = rlm_res.params[1]
-                else:
-                    # correlation undefined if less than 3 included trials
-                    slope = np.nan
 
-                # package stats for this ROI pair and bin
+        if split_accuracy:
+            # AC test performance for each group
+            # no-response trials scored as incorrect
+            correct = df['AC'].fillna(0).to_numpy()
+            for a in [1, 0]:
+                for c in categories:
+                    include = (correct == a) & (category == c)
+                    slope = robust_slope(item1[include], item2[include])
+
+                    # package stats for this ROI pair and bin
+                    r = pd.Series(
+                        {
+                            'subject': subject,
+                            'roi1': roi1,
+                            'roi2': roi2,
+                            'correct': a,
+                            'category': c,
+                            'slope': slope,
+                        }
+                    )
+                    results_list.append(r)
+        else:
+            for c in categories:
+                include = category == c
+                slope = robust_slope(item1[include], item2[include])
                 r = pd.Series(
                     {
                         'subject': subject,
                         'roi1': roi1,
                         'roi2': roi2,
-                        'correct': a,
                         'category': c,
-                        'slope': slope,
+                        'slope': slope
                     }
                 )
                 results_list.append(r)
