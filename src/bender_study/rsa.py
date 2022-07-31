@@ -89,6 +89,69 @@ def reactivation_stats(subjects, roi_rdms, dfs):
     return stats
 
 
+def rdm_reactivation_stats_split(
+    subjects, rdms, dfs, accuracy_filter, category_filter, min_count=2
+):
+    """Statistics of similarity between pre-exposure and study patterns."""
+    results_list = []
+    for rdm, df in zip(rdms, dfs):
+        # get matching trials
+        category_match = (df['AC'].fillna(0).to_numpy() == accuracy_filter)
+        accuracy_match = (df['category'].to_numpy() == category_filter)
+        match = category_match & accuracy_match
+
+        # if no matching trials, statistics are undefined
+        if np.count_nonzero(match) < min_count:
+            res = pd.Series({'self': np.nan, 'within': np.nan})
+            results_list.append(res)
+            continue
+
+        # filter the dataframe and RDM
+        df = df.loc[match]
+        rdm = rdm[np.ix_(match, match)]
+
+        # selector for self pairs
+        pair_self = np.eye(df.shape[0], dtype=bool)
+
+        # selector for within-category pairs
+        category = df['category'].to_numpy()
+        pair_within = category == category[:, np.newaxis]
+
+        # transform to Fisher z of correlation
+        z = np.arctanh(1 - rdm)
+
+        # calculate statistics
+        res = pd.Series(
+            {
+                'self': np.mean(z[pair_self]),
+                'within': np.mean(z[~pair_self & pair_within]),
+            }
+        )
+        results_list.append(res)
+    results = pd.DataFrame(results_list, index=subjects)
+    results['item'] = results['self'] - results['within']
+    return results
+
+
+def reactivation_stats_split(subjects, roi_rdms, dfs):
+    """Reactivation statistics by category and accuracy."""
+    categories = dfs[0]['category'].unique()
+    stats_list = []
+    for roi, rdms in roi_rdms.items():
+        for a in [1, 0]:
+            for c in categories:
+                results = rdm_reactivation_stats_split(
+                    subjects, rdms, dfs, accuracy_filter=a, category_filter=c
+                )
+                results['roi'] = roi
+                results['correct'] = a
+                results['category'] = c
+                stats_list.append(results)
+    stats = pd.concat(stats_list)
+    stats.index.rename('subject', inplace=True)
+    return stats
+
+
 def robust_slope(x, y, min_count=5):
     """Calculate slope based on robust regression"""
     if len(x) >= min_count:
