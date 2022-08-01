@@ -3,8 +3,10 @@
 from pathlib import Path
 import random
 
+import click
 import numpy as np
 import scipy.stats as stats
+import scipy.io as sio
 import statsmodels.api as sm
 import pandas as pd
 
@@ -215,3 +217,77 @@ def item_roi_correlation(subjects, roi1, roi2, roi_rdms, dfs, split_accuracy=Fal
                 results_list.append(r)
     item_corr = pd.DataFrame(results_list)
     return item_corr
+
+
+def load_model_mat(model_file):
+    """Read a model RDM from a MAT-file."""
+    # load the MAT-file
+    mat = sio.loadmat(model_file)
+    if 'rdm' not in mat:
+        raise ValueError(f'Model RDM file not in standard format: {model_file}')
+    rdm = mat['rdm']
+    if 'vectors' not in mat:
+        vectors = None
+    else:
+        vectors = mat['vectors']
+
+    # check that the rdm is sensible
+    assert np.allclose(np.diag(rdm), 0)
+    assert rdm.shape[0] == rdm.shape[1]
+
+    # get items in list format
+    f = mat['items']
+    if len(f) == 1:
+        items = [i[0] for i in f[0]]
+    elif type(f[0]) == np.str_:
+        items = [i.strip() for i in f]
+    else:
+        items = [i[0][0] for i in f]
+    assert rdm.shape[0] == len(items)
+    return items, vectors, rdm
+
+
+def pool_index(trial_items, pool_items_list):
+    """
+    Get the index of each item in the full pool.
+
+    Parameters
+    ----------
+    trial_items : pandas.Series
+        The item presented on each trial.
+
+    pool_items_list : list or numpy.ndarray
+        List of items in the full pool.
+
+    Returns
+    -------
+    item_index : pandas.Series
+        Index of each item in the pool. Trials with items not in the
+        pool will be NaN.
+    """
+    trial_items = pd.Series(trial_items)
+    pool_map = dict(zip(pool_items_list, np.arange(len(pool_items_list))))
+    item_index = trial_items.map(pool_map)
+    return item_index
+
+
+def get_item_vectors(items, model):
+    """Get vectors for a set of items."""
+    if not len(np.unique(model['items'])) == len(model['items']):
+        raise ValueError(f'Items in model are not unique.')
+
+    item_index = pool_index(items, model['items'])
+    if np.any(np.isnan(item_index)):
+        n = np.count_nonzero(np.isnan(item_index))
+        raise ValueError(f'{n} item(s) not found in model.')
+    item_vectors = model['vectors'][item_index, :]
+    return item_vectors
+
+
+@click.command()
+@click.argument("mat_file", type=click.Path(exists=True))
+@click.argument("npz_file", type=click.Path())
+def convert_model(mat_file, npz_file):
+    """Convert a model MAT-file to npz format."""
+    items, vectors, rdm = load_model_mat(mat_file)
+    np.savez(npz_file, items=items, vectors=vectors, rdm=rdm)
