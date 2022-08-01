@@ -114,7 +114,10 @@ pip install jupyterlab
 python -m ipykernel install --user --name bender_study
 ```
 
-You must have your virtual environment installed when you run this. Launch Jupyter Lab using `jupyter lab &`.
+You must have your virtual environment installed when you run this. 
+Set up necessary environment variables by editing `.profile` for your system; you must indicate where to find data and searchlight results, and where to save figures.
+Set up the Bash environment using `source .profile`.
+Launch Jupyter Lab using `jupyter lab &`.
 
 * Analyze behavioral test performance and plot.
   * `plot_behav.ipynb` 
