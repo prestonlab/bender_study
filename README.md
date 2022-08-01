@@ -100,6 +100,11 @@ Basic preprocessing was done using fPrep 1.0.0 (originally called FAT). See the 
 * Calculate individual representational dissimilarity matrices during the study phase.
   * `bender_indiv_rdm.py cat_react_item2_lprc_dil1c -s _stim2`
 
+### Prepare model of semantics
+
+* Convert from MAT-file format to NPZ
+  * `bender-convert-model ~/work/bender/batch/models3/allstim/mat_wiki_w2v.mat ~/work/bender/batch/semantics/wiki_w2v.npz` 
+
 ### Analysis notebooks
 
 Notebooks are stored in the `jupyter` directory. To run, install Jupyter Lab and the notebook kernel using: 
