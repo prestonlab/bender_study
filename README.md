@@ -3,9 +3,12 @@ Code for analysis of the Bender study phase.
 
 ## Analysis procedure
 
+The following steps are designed to reproduce all analyses presented in the paper. 
+While I have attempted to include all necessary commands, the procedure has not been repeated since the original run, and may be missing some steps. 
+
 ### Installation
 
-Run on Lonestar 6 with Python 3.9.
+Tested on the Lonestar 6 cluster with Python 3.9.
 
 Steps to run installation (only needs to be run once):
 
