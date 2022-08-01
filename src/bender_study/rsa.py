@@ -7,6 +7,7 @@ import click
 import numpy as np
 import scipy.stats as stats
 import scipy.io as sio
+import scipy.spatial.distance as sd
 import statsmodels.api as sm
 import pandas as pd
 
@@ -217,6 +218,69 @@ def item_roi_correlation(subjects, roi1, roi2, roi_rdms, dfs, split_accuracy=Fal
                 results_list.append(r)
     item_corr = pd.DataFrame(results_list)
     return item_corr
+
+
+def trial_model_correlation(model_rdm, neural_rdm):
+    """Correlation with a model per trial."""
+    n_items = model_rdm.shape[0]
+    rho = np.empty(n_items)
+    include = ~np.eye(n_items, dtype=bool)
+    for i in range(n_items):
+        # correlation between model distance and neural distance,
+        # excluding self-similarity
+        model_vec = model_rdm[include[i, :], i]
+        neural_vec = neural_rdm[include[i, :], i]
+        rho[i], _ = stats.spearmanr(model_vec, neural_vec)
+    return rho
+
+
+def subject_item_model_correlation(subject, item_rdm, integ_rdm, df, model):
+    """Reactivation model correlation by AC accuracy."""
+    # extract self-similarity as a measure of item reactivation
+    r_self = np.diag(np.arctanh(1 - item_rdm))
+
+    # create model RDM for AC semantics
+    a_vectors = get_item_vectors(df['item1'], model)
+    c_vectors = get_item_vectors(df['item3'], model)
+    ac_vectors = a_vectors + c_vectors
+    ac_rdm = sd.squareform(sd.pdist(ac_vectors, 'correlation'))
+
+    # calculate model correlation for each trial
+    r_ac = trial_model_correlation(ac_rdm, integ_rdm)
+
+    results_list = []
+    for a in [1, 0]:
+        include = df['AC'].fillna(0).to_numpy() == a
+        x = r_self[include]
+        y = r_ac[include]
+        slope = robust_slope(x, y)
+        res = pd.Series(
+            {
+                'subject': subject,
+                'correct': a,
+                'slope': slope,
+            }
+        )
+        results_list.append(res)
+    results = pd.DataFrame(results_list)
+    return results
+
+
+def item_model_correlation(subjects, item_rdms, integ_rdms, dfs, model):
+    """Correlation between item reactivation and model by AC accuracy."""
+    results_list = []
+    for item_roi, item_roi_rdms in item_rdms.items():
+        for integ_roi, integ_roi_rdms in integ_rdms.items():
+            inputs = zip(subjects, item_roi_rdms, integ_roi_rdms, dfs)
+            for subject, item_rdm, integ_rdm, df in inputs:
+                res = subject_item_model_correlation(
+                    subject, item_rdm, integ_rdm, df, model
+                )
+                res['item_roi'] = item_roi
+                res['integ_roi'] = integ_roi
+                results_list.append(res)
+    results = pd.concat(results_list)
+    return results
 
 
 def load_model_mat(model_file):
