@@ -120,4 +120,10 @@ Set up the Bash environment using `source .profile`.
 Launch Jupyter Lab using `jupyter lab &`.
 
 * Analyze behavioral test performance and plot.
-  * `plot_behav.ipynb` 
+  * `plot_behav.ipynb`
+* Examine reactivation of A item perceptual templates during BC study.
+  * `plot_react_stats.ipynb`
+* Examine regions with reactivation that predicts subsequent AC inference.
+  * `plot_sme_stats.ipynb`
+* Examine the relationship between item suppression and AC semantic integration.
+  * `plot_react_sem.ipynb`
