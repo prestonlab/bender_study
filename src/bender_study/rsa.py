@@ -245,14 +245,16 @@ def subject_item_model_correlation(subject, item_rdm, integ_rdm, df, model):
     ac_vectors = a_vectors + c_vectors
     ac_rdm = sd.squareform(sd.pdist(ac_vectors, 'correlation'))
 
-    # calculate model correlation for each trial
-    r_ac = trial_model_correlation(ac_rdm, integ_rdm)
-
     results_list = []
     for a in [1, 0]:
+        # item reactivation for included trials
         include = df['AC'].fillna(0).to_numpy() == a
         x = r_self[include]
-        y = r_ac[include]
+
+        # model correlation for each included trial
+        ind = np.ix_(include, include)
+        y = trial_model_correlation(ac_rdm[ind], integ_rdm[ind])
+
         slope = robust_slope(x, y)
         res = pd.Series(
             {
