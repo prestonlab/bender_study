@@ -1,9 +1,13 @@
 """Analysis of task data."""
 
 import os
+import glob
+import re
 import json
 from pkg_resources import resource_filename
+import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def get_runs(task):
@@ -130,3 +134,29 @@ def load_test_events(bids_dir, tasks=None, subjects=None, **kwargs):
     df['correct'] = df['response'] == df['target']
     df['correct'] = df['correct'].mask(df['response'].isna())
     return df
+
+
+def read_images(pool, im_dir):
+    """Read image files for a set of items."""
+    images = {}
+    for i, item in pool.iterrows():
+        # file names should have underscores instead of spaces
+        file_base = item.stim.replace(' ', '_')
+        im_base = os.path.join(im_dir, item.subcategory, file_base)
+
+        # search for a matching image file for this item
+        res = [f for f in glob.glob(im_base + '.*') if re.search('\w+\.(png|jpg)', f)]
+        if not res:
+            raise IOError(f'No file found matching: {im_base}')
+        elif len(res) > 1:
+            raise IOError(f'Multiple matches for: {im_base}')
+        im_file = res[0]
+
+        # read the image
+        image = plt.imread(im_file)
+
+        # if grayscale, convert to RGB
+        if image.ndim == 2:
+            image = np.tile(image[:, :, np.newaxis], [1, 1, 3])
+        images[item.stim] = image
+    return images
