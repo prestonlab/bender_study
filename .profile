@@ -46,6 +46,6 @@ if [[ $environ = remote ]]; then
 fi
 
 # variables for notebooks
-export BENDER_BIDS=$HOME/Dropbox/data/bender/rawdata
+export BENDER_BIDS=$HOME/Dropbox/data/bender
 export BENDER_FIGURES=$HOME/Dropbox/work/bender/figs/react_r1
 export BENDER_RESULTS=$HOME/work/bender
