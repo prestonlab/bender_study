@@ -52,88 +52,69 @@ def load_roi_rdms(rdm_dir, subjects, rois, analyses, clusters, suffix):
     return rdms
 
 
-def rdm_reactivation_stats(subjects, rdms, dfs):
+def rdm_reactivation_stats(rdm, df):
     """Statistics of similarity between pre-exposure and study patterns."""
-    results_list = []
-    for rdm, df in zip(rdms, dfs):
-        # selector for self pairs
-        pair_self = np.eye(df.shape[0], dtype=bool)
+    # selector for self pairs
+    pair_self = np.eye(df.shape[0], dtype=bool)
 
-        # selector for within-category pairs
-        category = df['category'].to_numpy()
-        pair_within = category == category[:, np.newaxis]
+    # selector for within-category pairs
+    category = df['category'].to_numpy()
+    pair_within = category == category[:, np.newaxis]
 
-        # transform to Fisher z of correlation
-        z = np.arctanh(1 - rdm)
+    # transform to Fisher z of correlation
+    z = np.arctanh(1 - rdm)
+
+    # calculate statistics
+    stats = pd.Series(
+        {
+            'self': np.mean(z[pair_self]),
+            'within': np.mean(z[~pair_self & pair_within]),
+        }
+    )
+    stats['item'] = stats['self'] - stats['within']
+
+    if np.any(~pair_within):
+        # if there are multiple categories,
+        # calculate between-category statistics
+        stats['between'] = np.mean(z[~pair_within])
+        stats['category'] = stats['within'] - stats['between']
+    return stats
+
+
+def rdm_reactivation_stats_subset(
+    rdm, df, accuracy_filter, category_filter, min_count=2
+):
+    """Reactivation statistics for a subset of trials."""
+    # get matching trials
+    category_match = (df['AC'].fillna(0).to_numpy() == accuracy_filter)
+    accuracy_match = (df['category'].to_numpy() == category_filter)
+    match = category_match & accuracy_match
+
+    if np.count_nonzero(match) >= min_count:
+        # filter the dataframe and RDM
+        df = df.loc[match]
+        rdm = rdm[np.ix_(match, match)]
 
         # calculate statistics
-        res = pd.Series(
-            {
-                'self': np.mean(z[pair_self]),
-                'within': np.mean(z[~pair_self & pair_within]),
-                'between': np.mean(z[~pair_within]),
-            }
-        )
-        results_list.append(res)
-    results = pd.DataFrame(results_list, index=subjects)
-    results['item'] = results['self'] - results['within']
-    results['category'] = results['within'] - results['between']
-    return results
+        stats = rdm_reactivation_stats(rdm, df)
+    else:
+        # if insufficient trials, stats are undefined
+        stats = pd.Series({'self': np.nan, 'within': np.nan, 'item': np.nan})
+    return stats
 
 
 def reactivation_stats(subjects, roi_rdms, dfs):
     """Reactivation statistics for multiple ROIs."""
     stats_list = []
     for roi, rdms in roi_rdms.items():
-        results = rdm_reactivation_stats(subjects, rdms, dfs)
-        stats_list.append(results)
-    stats = pd.concat(stats_list, keys=roi_rdms.keys())
-    stats.index.rename(['roi', 'subject'], inplace=True)
+        for subject, rdm, df in zip(subjects, rdms, dfs):
+            rdm_stats = rdm_reactivation_stats(rdm, df)
+            rdm_stats['subject'] = subject
+            rdm_stats['roi'] = roi
+            stats_list.append(rdm_stats)
+    stats = pd.DataFrame(stats_list)
+    stats.set_index(['subject', 'roi'], inplace=True)
     return stats
-
-
-def rdm_reactivation_stats_split(
-    subjects, rdms, dfs, accuracy_filter, category_filter, min_count=2
-):
-    """Statistics of similarity between pre-exposure and study patterns."""
-    results_list = []
-    for rdm, df in zip(rdms, dfs):
-        # get matching trials
-        category_match = (df['AC'].fillna(0).to_numpy() == accuracy_filter)
-        accuracy_match = (df['category'].to_numpy() == category_filter)
-        match = category_match & accuracy_match
-
-        # if no matching trials, statistics are undefined
-        if np.count_nonzero(match) < min_count:
-            res = pd.Series({'self': np.nan, 'within': np.nan})
-            results_list.append(res)
-            continue
-
-        # filter the dataframe and RDM
-        df = df.loc[match]
-        rdm = rdm[np.ix_(match, match)]
-
-        # selector for self pairs
-        pair_self = np.eye(df.shape[0], dtype=bool)
-
-        # selector for within-category pairs
-        category = df['category'].to_numpy()
-        pair_within = category == category[:, np.newaxis]
-
-        # transform to Fisher z of correlation
-        z = np.arctanh(1 - rdm)
-
-        # calculate statistics
-        res = pd.Series(
-            {
-                'self': np.mean(z[pair_self]),
-                'within': np.mean(z[~pair_self & pair_within]),
-            }
-        )
-        results_list.append(res)
-    results = pd.DataFrame(results_list, index=subjects)
-    results['item'] = results['self'] - results['within']
-    return results
 
 
 def reactivation_stats_split(subjects, roi_rdms, dfs):
@@ -143,15 +124,15 @@ def reactivation_stats_split(subjects, roi_rdms, dfs):
     for roi, rdms in roi_rdms.items():
         for a in [1, 0]:
             for c in categories:
-                results = rdm_reactivation_stats_split(
-                    subjects, rdms, dfs, accuracy_filter=a, category_filter=c
-                )
-                results['roi'] = roi
-                results['correct'] = a
-                results['category'] = c
-                stats_list.append(results)
-    stats = pd.concat(stats_list)
-    stats.index.rename('subject', inplace=True)
+                for subject, rdm, df in zip(subjects, rdms, dfs):
+                    rdm_stats = rdm_reactivation_stats_subset(rdm, df, a, c)
+                    rdm_stats['subject'] = subject
+                    rdm_stats['roi'] = roi
+                    rdm_stats['correct'] = a
+                    rdm_stats['category'] = c
+                    stats_list.append(rdm_stats)
+    stats = pd.DataFrame(stats_list)
+    stats.set_index(['subject', 'roi', 'category', 'correct'], inplace=True)
     return stats
 
 
