@@ -105,6 +105,8 @@ Basic preprocessing was done using fPrep 1.0.0 (originally called FAT). See the 
 
 ### Prepare model of semantics
 
+* Create wiki2vec model of semantic similarity for the stimulus pool
+  * See instructions in the [wiki2vec](https://github.com/prestonlab/wiki2vec) repository. 
 * Convert from MAT-file format to NPZ
   * `bender-convert-model ~/work/bender/batch/models3/allstim/mat_wiki_w2v.mat ~/work/bender/batch/semantics/wiki_w2v.npz` 
 
