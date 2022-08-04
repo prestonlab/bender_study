@@ -164,7 +164,7 @@ def robust_slope(x, y, min_count=5):
         rlm_res = rlm.fit()
         slope = rlm_res.params[1]
     else:
-        # correlation undefined if less than 3 included trials
+        # insufficient samples to calculate slope
         slope = np.nan
     return slope
 
