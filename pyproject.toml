@@ -1,7 +1,7 @@
 [project]
 name = "bender_study"
 description = "Bender Study: Behavioral and neural analysis of overlapping pair learning."
-version = "0.1.0"
+version = "1.0.0"
 readme = "README.md"
 license = {file = "LICENSE"}
 authors = [
