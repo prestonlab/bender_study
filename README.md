@@ -1,7 +1,9 @@
 # bender_study
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6967582.svg)](https://doi.org/10.5281/zenodo.6967582)
 
-Code for analysis of the Bender study phase.
+This repository contains code for analyses reported in:
+
+Morton NW, Zippi EL, Preston AR. In press. Memory reactivation and suppression modulate integration of the semantic features of related memories in hippocampus. Cerebral Cortex.
 
 ## Analysis procedure
 
