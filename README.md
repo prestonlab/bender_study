@@ -10,7 +10,7 @@ Morton NW, Zippi EL, Preston AR. In press. Memory reactivation and suppression m
 The following steps are designed to reproduce all analyses presented in the paper. 
 While I have attempted to include all necessary commands, the procedure has not been repeated since the original run, and may be missing some steps. 
 
-In the protocol shown below, commands are run on a high-performance computing cluster using the Slurm scheduler with the [EZlaunch](https://github.com/prestonlab/launch) package and [Launcher](https://docs.tacc.utexas.edu/software/launcher/). However, the analysis scripts should work on any Linux/Unix/WSL computing environment. Scripts are designed to process one subject/run at a time; the `slaunch` and `rlaunch` programs work with these scripts to run multiple subjects and/or runs in parallel using the cluster.
+In the protocol shown below, commands are run on a high-performance computing cluster using the Slurm scheduler with the [EZlaunch](https://github.com/prestonlab/launch) package and [Launcher](https://docs.tacc.utexas.edu/software/launcher/). However, the analysis scripts should work on any Linux/Unix/WSL computing environment. Scripts are designed to process one subject/run at a time; the `slaunch` and `rlaunch` programs work with these scripts to run multiple subjects and/or runs in parallel using the cluster. The `slaunch` and `rlaunch` programs require that Slurm and Launcher are installed.
 
 Help for scripts can be displayed by calling it with no arguments (for the shell `.sh` scripts) or with the `--help` argument (for the Python `.py` scripts).
 
